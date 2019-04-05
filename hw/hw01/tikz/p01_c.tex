@@ -1,0 +1,45 @@
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}[
+      node distance = 2.5cm,
+      vertex/.style = {circle,
+                       draw,
+                       fill=white,
+                       minimum size=0.3cm,
+                       drop shadow,
+                       text=black,
+                       font=\scriptsize},
+      true leaf/.style = {rectangle,
+                          draw,
+                          fill=green!20,
+                          minimum size=0.3cm,
+                          drop shadow,
+                          text=black,
+                          font=\scriptsize},
+      false leaf/.style = {true leaf,
+                           fill=red!20},
+      white label/.style = {
+        fill=white,
+        inner sep=0.5mm,
+        text=black,
+        font=\scriptsize,
+      },
+    ]
+    \node (A) [vertex] {$A$};
+    \node (B1) [vertex, below left of=A] {$B$};
+    \draw [->] (A) -- (B1) node[pos=0.5,white label] {F};
+    \node (B2) [vertex, below right of=A] {$B$};
+    \draw [->] (A) -- (B2) node[pos=0.5,white label] {T};
+
+    \node (F1) [false leaf, below left of=B1, node distance=1.5cm] {F};
+    \draw [->] (B1) -- (F1) node[pos=0.5,white label] {F};
+    \node (T1) [true leaf, below right of=B1, node distance=1.5cm] {T};
+    \draw [->] (B1) -- (T1) node[pos=0.5,white label] {T};
+
+    \node (T2) [true leaf, below left of=B2, node distance=1.5cm] {T};
+    \draw [->] (B2) -- (T2) node[pos=0.5,white label] {F};
+    \node (F2) [false leaf, below right of=B2, node distance=1.5cm] {F};
+    \draw [->] (B2) -- (F2) node[pos=0.5,white label] {T};
+  \end{tikzpicture}
+  \caption{Decision tree for problem \#\arabic{problemCount}\alph{subProbCount}}
+\end{figure}

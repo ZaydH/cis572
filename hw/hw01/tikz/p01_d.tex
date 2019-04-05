@@ -1,0 +1,58 @@
+\newcommand{\cdTree}[3]{%
+  \node (C#2) [vertex, below left of=#1, node distance=#3] {$C$};
+  \node (FB#2) [false leaf, below left of=C#2] {F};
+  \draw [->] (C#2) -- (FB#2) node[pos=0.5,white label] {F};
+  \node (D#2) [vertex, below right of=C#2] {$D$};
+  \draw [->] (C#2) -- (D#2) node[pos=0.5,white label] {T};
+
+  \node (FC#2) [false leaf, below left of=D#2, node distance=1.5cm] {F};
+  \draw [->] (D#2) -- (FC#2) node[pos=0.5,white label] {F};
+  \node (TC#2) [true leaf, below right of=D#2, node distance=1.5cm] {T};
+  \draw [->] (D#2) -- (TC#2) node[pos=0.5,white label] {T};
+}
+
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}[
+      node distance = 2.5cm,
+      vertex/.style = {
+        circle,
+        draw,
+        fill=white,
+        minimum size=0.3cm,
+        drop shadow,
+        text=black,
+        font=\scriptsize
+      },
+      true leaf/.style = {
+        rectangle,
+        draw,
+        fill=green!20,
+        minimum size=0.3cm,
+        drop shadow,
+        text=black,
+        font=\scriptsize
+      },
+      false leaf/.style = {true leaf,
+                           fill=red!20},
+      white label/.style = {%
+        fill=white,
+        inner sep=0.5mm,
+        text=black,
+        font=\scriptsize,
+      },
+    ]
+    \node (A) [vertex] {$A$};
+    \cdTree{A}{1}{5cm}
+    \draw [->] (A) -- (C1) node[pos=0.5,white label] {F};
+
+    \node (B) [vertex, below right of=A, node distance=5cm] {$B$};
+    \draw [->] (A) -- (B) node[pos=0.5,white label] {T};
+    \node (TA1) [true leaf, below right of=B, node distance=1.5cm] {T};
+    \draw [->] (B) -- (TA1) node[pos=0.5,white label] {T};
+    \cdTree{B}{2}{1.5cm}
+    \draw [->] (B) -- (C2) node[pos=0.5,white label] {F};
+  \end{tikzpicture}
+  \caption{Decision tree for problem \#\arabic{problemCount}\alph{subProbCount}}
+\end{figure}

@@ -1,0 +1,41 @@
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}[
+      node distance = 1.5cm,
+      vertex/.style = {circle,
+                       draw,
+                       fill=white,
+                       minimum size=0.3cm,
+                       drop shadow,
+                       text=black,
+                       font=\scriptsize},
+      true leaf/.style = {rectangle,
+                          draw,
+                          fill=green!20,
+                          minimum size=0.3cm,
+                          drop shadow,
+                          text=black,
+                          font=\scriptsize},
+      false leaf/.style = {true leaf,
+                           fill=red!20},
+      white label/.style = {
+        fill=white,
+        inner sep=0.5mm,
+        text=black,
+        font=\scriptsize,
+      },
+    ]
+    \node (A) [vertex] {$A$};
+    \node (F1) [false leaf, below left of=A] {F};
+    \draw [->] (A) -- (F1) node[pos=0.5,white label] {F};
+
+    \node (B) [vertex, below right of=A] {$B$};
+    \draw [->] (A) -- (B) node[pos=0.5,white label] {T};
+
+    \node (T1) [true leaf, below left of=B] {T};
+    \draw [->] (B) -- (T1) node[pos=0.5,white label] {F};
+    \node (F2) [false leaf, below right of=B] {F};
+    \draw [->] (B) -- (F2) node[pos=0.5,white label] {T};
+  \end{tikzpicture}
+  \caption{Decision tree for problem \#\arabic{problemCount}\alph{subProbCount}}
+\end{figure}

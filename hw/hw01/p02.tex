@@ -1,0 +1,52 @@
+\begin{problem}
+  Consider the samples in the ``Play-tennis'' dataset from Table~\ref{tab:P02:PlayTennis}. If you calculate the information-gain for all of the attributes of this set, you will observe that the attribute “Outlook” has the largest information-gain, which is equal to 0.246. Therefore, the attribute ”Outlook” is the best heuristic choice for the root node.
+\end{problem}
+
+\begin{table}[h]
+  \centering
+  \caption{Play tennis table}\label{tab:P02:PlayTennis}
+  \begin{tabular}{|c||c|c|c|c|c|}
+    \hline
+    \textbf{Day}  & \textit{Outlook}  & \textit{Temperature} & \textit{Humidity} & \textit{Wind} & \textit{PlayTennis} \\\hline\hline
+    D1  & Sunny    & Hot   & High   & Weak   & No \\\hline
+    D2  & Sunny    & Hot   & High   & Strong & No \\\hline
+    D3  & Overcast & Hot   & High   & Weak   & Yes\\\hline
+    D4  & Rain     & Mild  & High   & Weak   & Yes\\\hline
+    D5  & Rain     & Cool  & Normal & Weak   & Yes\\\hline
+    D6  & Rain     & Cool  & Normal & Strong & No \\\hline
+    D7  & Overcast & Cool  & Normal & Strong & Yes\\\hline
+    D8  & Sunny    & Mild  & High   & Weak   & No \\\hline
+    D9  & Sunny    & Cool  & Normal & Weak   & Yes\\\hline
+    D10 & Rain     & Mild  & Normal & Weak   & Yes\\\hline
+    D11 & Sunny    & Mild  & Normal & Strong & Yes\\\hline
+    D12 & Overcast & Mild  & High   & Strong & Yes\\\hline
+    D13 & Overcast & Hot   & Normal & Weak   & Yes\\\hline
+    D14 & Rain     & Mild  & High   & Strong & No \\\hline
+  \end{tabular}
+\end{table}
+
+\begin{subproblem}
+  List the labels of the new tree branches below the root node.
+\end{subproblem}
+
+``Sunny'', ``Rain'', \& ``Overcast''
+
+\begin{subproblem}
+  Which partition of the data will be assigned to each branch by ID3? Please list the sample IDs that will be assigned to each branch.
+\end{subproblem}
+
+\begin{table}[h]
+  \centering
+  \caption{ID3 partition over attribute ``Outlook''}\label{tab:P02:Partition}
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Outlook Value} & \textbf{IDs} \\\hline
+    Sunny    & D1, D2, D8, D9, D11 \\\hline
+    Overcast & D3, D7, D12, D13 \\\hline
+    Rain     & D4, D5, D6, D10, D14 \\\hline
+  \end{tabular}
+\end{table}
+
+\begin{subproblem}
+  Calculate the information gain for the remaining attributes in each branch, and determine which attribute will be chosen as the root of the sub-tree in each branch.
+\end{subproblem}

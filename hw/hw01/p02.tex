@@ -50,3 +50,32 @@
 \begin{subproblem}
   Calculate the information gain for the remaining attributes in each branch, and determine which attribute will be chosen as the root of the sub-tree in each branch.
 \end{subproblem}
+
+\noindent
+\textbf{Case~\#1}: ``Sunny''
+
+\begin{align*}
+  H_{\text{Sunny}} &= -\sum_{x\in PlayTennis} \Pr[x] \log \left(\Pr[x]\right) \\
+                   &= - \frac{3}{5} \log\left(\frac{3}{5}\right) - \frac{2}{5} \log\left(\frac{2}{5}\right) \\
+                   &=
+\end{align*}
+
+\noindent
+\textbf{Case~\#2}: ``Overcast''
+
+\begin{align*}
+  H_{\text{Overcast}} &= -\sum_{x\in PlayTennis} \Pr[x] \log \left(\Pr[x] \right)\\
+                      &= - 0 \log(0) - 1 \log(1) \\
+                      &= 0
+\end{align*}
+
+Since the entropy of value ``Overcast'' is already~0, there is no remaining information to gain (i.e.,~gain for all remaining variables will be 0).  Therefore, ``Overcast'' is a leaf node for \textit{PlayTennis} ``Yes''.
+
+\noindent
+\textbf{Case~\#3}: ``Rain''
+
+\begin{align*}
+  H_{\text{Sunny}} &= -\sum_{x\in PlayTennis} \Pr[x] \log \left(\Pr[x]\right) \\
+                   &= - \frac{3}{5} \log\left(\frac{3}{5}\right) - \frac{2}{5} \log\left(\frac{2}{5}\right) \\
+                   &=
+\end{align*}

@@ -52,16 +52,29 @@
 \end{subproblem}
 
 \noindent
-\textbf{Case~\#1}: ``Sunny''
+{\large \textbf{Case~\#1}: ``Sunny''}
 
 \begin{align*}
   H_{\text{Sunny}} &= -\sum_{x\in PlayTennis} \Pr[x] \log \left(\Pr[x]\right) \\
                    &= - \frac{3}{5} \log\left(\frac{3}{5}\right) - \frac{2}{5} \log\left(\frac{2}{5}\right) \\
-                   &=
+                   &\approx 0.971
 \end{align*}
 
 \noindent
-\textbf{Case~\#2}: ``Overcast''
+\textbf{Temperature}: $IG = $
+
+\noindent
+\textbf{Humidity}: $IG = $
+
+\noindent
+\textbf{Wind}: $IG = $
+
+\begin{center}
+  \textbf{Selected Variable}: $\boxed{}$
+\end{center}
+
+\noindent
+{\large \textbf{Case~\#2}: ``Overcast''}
 
 \begin{align*}
   H_{\text{Overcast}} &= -\sum_{x\in PlayTennis} \Pr[x] \log \left(\Pr[x] \right)\\
@@ -72,10 +85,10 @@
 Since the entropy of value ``Overcast'' is already~0, there is no remaining information to gain (i.e.,~gain for all remaining variables will be 0).  Therefore, ``Overcast'' is a leaf node for \textit{PlayTennis} ``Yes''.
 
 \noindent
-\textbf{Case~\#3}: ``Rain''
+{\large \textbf{Case~\#3}: ``Rain''}
 
 \begin{align*}
   H_{\text{Sunny}} &= -\sum_{x\in PlayTennis} \Pr[x] \log \left(\Pr[x]\right) \\
-                   &= - \frac{3}{5} \log\left(\frac{3}{5}\right) - \frac{2}{5} \log\left(\frac{2}{5}\right) \\
-                   &=
+                   &= - \frac{2}{5} \log\left(\frac{2}{5}\right) - \frac{3}{5} \log\left(\frac{3}{5}\right) \\
+                   &\approx 0.971
 \end{align*}

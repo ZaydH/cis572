@@ -8,7 +8,7 @@
 
 For notational convenience, name the decision tree constructed from credit history as~$T_1$ and the other decision tree as~$T_2$.
 
-A very simple algorithm is to start with~$T_1$ and replace any ``Low Risk'' leaf node in~$T_1$ with~$T_2$.  Clearly, if an example is ``high risk'' in $T_1$, it is still ``High Risk'' in this combined tree.  If the example is ``Low Risk'' in $T_1$, its final label matches the label from $T_2$.  The leaf replacement strategy described previously ensures that paradigm.
+A very simple algorithm is to start with~$T_1$ and replace any ``Low Risk'' leaf node in~$T_1$ with~$T_2$.  Clearly, if an example is ``High Risk'' in $T_1$, it is still ``High Risk'' in this combined tree since those root-to-leaf paths are unchanged.  In such cases, the value of $T_2$ is irrelevant to the final classification.  If the example is ``Low Risk'' in $T_1$, its final label matches the label from $T_2$.  The leaf replacement strategy described previously ensures that paradigm still holds in the combined tree.
 
 One could raise the concern that the same feature may appear more than once in a root-to-leaf path.  While that tree is not minimally compact, it does not affect the correctness.
 

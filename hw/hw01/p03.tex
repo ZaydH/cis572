@@ -16,3 +16,8 @@ One could raise the concern that the same feature may appear more than once in a
   Let $n_1$ and $n_2$ be the number of leaves in the first and second decision trees, respectively. Provide an upper bound on $n$, the number of leaves in the single equivalent decision tree, expressed as a function of $n_1$ and $n_2$.
 \end{subproblem}
 
+\noindent
+\textbf{Answer}: $\boxed{O(n_1 \cdot n_2)}$
+
+\noindent
+\textbf{Explanation}: In the worst case, every leaf in $T_1$ may be ``Low Risk''.  Therefore, using the previously described algorithm, each leaf in $T_1$ would be replaced with $T_2$ resulting in $n_2$ leaves in the combined tree for every leaf in $T_1$.  That means the worst case is $n_1\cdot n_2$ leaves.

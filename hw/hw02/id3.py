@@ -5,24 +5,27 @@
 # Starter code provided by Daniel Lowd
 #
 #
+from __future__ import division
 import sys
 import re
+import math
 # Node class for the decision tree
 import node
 
 
-train=None
-varnames=None
-test=None
-testvarnames=None
-root=None
+train = None
+varnames = None
+test = None
+testvarnames = None
+root = None
 
 # Helper function computes entropy of Bernoulli distribution with
 # parameter p
 def entropy(p):
-	# >>>> YOUR CODE GOES HERE <<<<
+    # >>>> YOUR CODE GOES HERE <<<<
     # For now, always return "0":
-	return 0;
+    if p == 0. or p == 1.0: return 0.
+    return p * math.log(p, 2.) + (1 - p) * math.log(1 - p, 2)
 
 
 # Compute information gain for a particular split, given the counts
@@ -31,9 +34,14 @@ def entropy(p):
 # py : number of ocurrences of y=1
 # total : total length of the data
 def infogain(py_pxi, pxi, py, total):
-	# >>>> YOUR CODE GOES HERE <<<<
+    # >>>> YOUR CODE GOES HERE <<<<
     # For now, always return "0":
-	return 0;
+    h0 = entropy(py / total)
+
+    h1 = 0
+    for y_i, n_i in [(py_pxi, py), (py - py_pxi, n - py)]:
+        h1 += n_i / total * entropy(y_i / n_i)
+    return h0 / h1
 
 # OTHER SUGGESTED HELPER FUNCTIONS:
 # - collect counts for each variable value with each class label
@@ -51,7 +59,7 @@ def read_data(filename):
     varnames = p.split(header)
     namehash = {}
     for l in f:
-		data.append([int(x) for x in p.split(l.strip())])
+        data.append([int(x) for x in p.split(l.strip())])
     return (data, varnames)
 
 # Saves the model to a file.  Most of the work here is done in the
@@ -73,44 +81,45 @@ def build_tree(data, varnames):
 # Each example is a list of attribute values, where the last element in
 # the list is the class value.
 def loadAndTrain(trainS,testS,modelS):
-	global train
-	global varnames
-	global test
-	global testvarnames
-	global root
-	(train, varnames) = read_data(trainS)
-	(test, testvarnames) = read_data(testS)
-	modelfile = modelS
+    global train
+    global varnames
+    global test
+    global testvarnames
+    global root
+    (train, varnames) = read_data(trainS)
+    (test, testvarnames) = read_data(testS)
+    modelfile = modelS
 
-	# build_tree is the main function you'll have to implement, along with
+    # build_tree is the main function you'll have to implement, along with
     # any helper functions needed.  It should return the root node of the
     # decision tree.
-	root = build_tree(train, varnames)
-	print_model(root, modelfile)
+    root = build_tree(train, varnames)
+    print_model(root, modelfile)
 
 def runTest():
-	correct = 0
-	# The position of the class label is the last element in the list.
-	yi = len(test[0]) - 1
-	for x in test:
-		# Classification is done recursively by the node class.
+    correct = 0
+    # The position of the class label is the last element in the list.
+    yi = len(test[0]) - 1
+    for x in test:
+        # Classification is done recursively by the node class.
         # This should work as-is.
-		pred = root.classify(x)
-		if pred == x[yi]:
-			correct += 1
-	acc = float(correct)/len(test)
-	return acc
+        pred = root.classify(x)
+        if pred == x[yi]:
+            correct += 1
+    acc = float(correct) / len(test)
+    return acc
 
 
 # Load train and test data.  Learn model.  Report accuracy.
 def main(argv):
-    if (len(argv) != 3):
-		print 'Usage: id3.py <train> <test> <model>'
-		sys.exit(2)
-    loadAndTrain(argv[0],argv[1],argv[2])
+    if len(argv) != 3:
+        print 'Usage: id3.py <train> <test> <model>'
+        sys.exit(2)
+    loadAndTrain(argv[0], argv[1], argv[2])
 
     acc = runTest()
-    print "Accuracy: ",acc
+    print "Accuracy: ", acc
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])

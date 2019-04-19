@@ -4,6 +4,8 @@
 #
 # Starter code provided by Daniel Lowd
 #
+# Submission: Zayd Hammoudeh
+#
 #
 from __future__ import division
 import sys
@@ -21,6 +23,7 @@ namehash = None
 test = None
 testvarnames = None
 root = None
+
 
 # Helper function computes entropy of Bernoulli distribution with
 # parameter p
@@ -41,11 +44,13 @@ def infogain(py_pxi, pxi, py, total):
     # For now, always return "0":
     h0 = entropy(py / total)
 
+    # Sometimes the test cases are dumb and give ints
     if isinstance(pxi, int): pxi = [pxi]
     if isinstance(py_pxi, int): py_pxi = [py_pxi]
 
-    h1 = 0
+    h1 = 0.
     for y_i, n_i in zip(py_pxi, pxi):
+        if n_i == 0: continue
         h1 += n_i / total * entropy(y_i / n_i)
     return h0 - h1
 
@@ -59,7 +64,7 @@ def read_data(filename):
     varnames = p.split(header)
     for l in f:
         data.append([int(x) for x in p.split(l.strip())])
-    return (data, varnames)
+    return data, varnames
 
 
 # Saves the model to a file.  Most of the work here is done in the
@@ -109,9 +114,6 @@ def _build_most_common_val_leaf(names, data):
     return node.Leaf(names, cntr.most_common(1)[0][0])
 
 
-    return _build_tree(data, varnames, list(range(len(varnames) - 1)))
-
-
 # "varnames" is a list of names, one for each variable
 # "train" and "test" are lists of examples.
 # Each example is a list of attribute values, where the last element in
@@ -135,16 +137,6 @@ def loadAndTrain(trainS,testS,modelS):
 
 def runTest():
     return sum(1 for x in test if x[-1] == root.classify(x)) / len(test)
-    # # The position of the class label is the last element in the list.
-    # correct = 0
-    # yi = len(test[0]) - 1
-    # for x in test:
-    #     # Classification is done recursively by the node class.
-    #     # This should work as-is.
-    #     pred = root.classify(x)
-    #     if pred == x[yi]:
-    #         correct += 1
-    # return acc
 
 
 # Load train and test data.  Learn model.  Report accuracy.

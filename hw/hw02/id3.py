@@ -45,8 +45,8 @@ def infogain(py_pxi, pxi, py, total):
     h0 = entropy(py / total)
 
     # Sometimes the test cases are dumb and give ints
-    if isinstance(pxi, int): pxi = [pxi]
-    if isinstance(py_pxi, int): py_pxi = [py_pxi]
+    if isinstance(pxi, int): pxi = [pxi, total - pxi]
+    if isinstance(py_pxi, int): py_pxi = [py_pxi, py - py_pxi]
 
     h1 = 0.
     for y_i, n_i in zip(py_pxi, pxi):

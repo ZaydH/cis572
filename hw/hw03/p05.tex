@@ -9,6 +9,23 @@ where $\alpha_{i} \geq 0$ and $\sum_{i=1}^{n} \alpha_i = 1$. Consider a second s
 Prove that the two sets of points are linearly separable if their convex hulls do not intersect.
 \end{problem}
 
+\begin{proof}
+  \textit{By contradiction}.
+
+  Assume that $z$ and $x$ do not intersect but are \textit{not} linearly separable.  By the definition of a convex hull, the boundaries of the areas enclosed by $x$ and $z$ are continuous polytopes.  If $x$ and $z$ are not linearly separable then for all $w$, including those meeting the definition of $\alpha$, there exists some $x_j \in x$ and $z_k \in z$ such that:
+
+  \[w^{T}x_j + b = w^{T}z_k +b \text{.} \]
+
+\noindent
+By subtracting $b$, it is clear then that:
+
+\[w^{T}x_j  = w^{T}z_k \text{.} \]
+
+\noindent
+Therefore, $x_j = z_k$ which means $x_j\in z$ and $z_k \in x$.  However, this is a contradiction since $x$ and $z$ do not intersect, i.e.,~are disjoint.
+
+\end{proof}
+
 \begin{subproblem}
-  (BONUS: Prove that two sets of points are linearly separable if and only if their convex hulls do not intersect.)
+  (BONUS\@: Prove that two sets of points are linearly separable if and only if their convex hulls do not intersect.)
 \end{subproblem}

@@ -1,0 +1,14 @@
+\begin{problem}
+Given a set of data points $x_1,\ldots,x_n$, we can define the convex hull to be the set of all points $x$ given by
+
+\[x = \sum_{i=1}^{n} \alpha_i x_i \]
+
+\noindent
+where $\alpha_{i} \geq 0$ and $\sum_{i=1}^{n} \alpha_i = 1$. Consider a second set of points $z_1,\ldots,z_n$ together with their corresponding convex hull. By definition, the two sets of points will be linearly separable if there exists a vector $w$ and a scalar $b$ such that $w^{T}x_i + b > 0$ for all $x_i$ and $w^{T}z_i + b < 0$ for all $z_i$.
+
+Prove that the two sets of points are linearly separable if their convex hulls do not intersect.
+\end{problem}
+
+\begin{subproblem}
+  (BONUS: Prove that two sets of points are linearly separable if and only if their convex hulls do not intersect.)
+\end{subproblem}

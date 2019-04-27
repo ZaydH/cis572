@@ -1,0 +1,222 @@
+\begin{problem}
+  Consider the samples in the ``Play-tennis'' dataset from Table~\ref{tab:P02:PlayTennis}. If you calculate the information-gain for all of the attributes of this set, you will observe that the attribute “Outlook” has the largest information-gain, which is equal to 0.246. Therefore, the attribute ”Outlook” is the best heuristic choice for the root node.
+\end{problem}
+
+\begin{table}[h]
+  \centering
+  \caption{Play tennis table}\label{tab:P02:PlayTennis}
+  \begin{tabular}{|c||c|c|c|c|c|}
+    \hline
+    \textbf{Day}  & \textit{Outlook}  & \textit{Temperature} & \textit{Humidity} & \textit{Wind} & \textit{PlayTennis} \\\hline\hline
+    D1  & Sunny    & Hot   & High   & Weak   & No \\\hline
+    D2  & Sunny    & Hot   & High   & Strong & No \\\hline
+    D3  & Overcast & Hot   & High   & Weak   & Yes\\\hline
+    D4  & Rain     & Mild  & High   & Weak   & Yes\\\hline
+    D5  & Rain     & Cool  & Normal & Weak   & Yes\\\hline
+    D6  & Rain     & Cool  & Normal & Strong & No \\\hline
+    D7  & Overcast & Cool  & Normal & Strong & Yes\\\hline
+    D8  & Sunny    & Mild  & High   & Weak   & No \\\hline
+    D9  & Sunny    & Cool  & Normal & Weak   & Yes\\\hline
+    D10 & Rain     & Mild  & Normal & Weak   & Yes\\\hline
+    D11 & Sunny    & Mild  & Normal & Strong & Yes\\\hline
+    D12 & Overcast & Mild  & High   & Strong & Yes\\\hline
+    D13 & Overcast & Hot   & Normal & Weak   & Yes\\\hline
+    D14 & Rain     & Mild  & High   & Strong & No \\\hline
+  \end{tabular}
+\end{table}
+
+\begin{subproblem}
+  List the labels of the new tree branches below the root node.
+\end{subproblem}
+
+``Sunny'', ``Rain'', \& ``Overcast''
+
+\begin{subproblem}
+  Which partition of the data will be assigned to each branch by ID3? Please list the sample IDs that will be assigned to each branch.
+\end{subproblem}
+
+\begin{table}[h]
+  \centering
+  \caption{ID3 partition over attribute ``Outlook''}\label{tab:P02:Partition}
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Outlook Value} & \textbf{IDs} \\\hline
+    Sunny    & D1, D2, D8, D9, D11 \\\hline
+    Overcast & D3, D7, D12, D13 \\\hline
+    Rain     & D4, D5, D6, D10, D14 \\\hline
+  \end{tabular}
+\end{table}
+
+\begin{subproblem}
+  Calculate the information gain for the remaining attributes in each branch, and determine which attribute will be chosen as the root of the sub-tree in each branch.
+\end{subproblem}
+
+\noindent
+{\large \textbf{Case~\#1}: ``Sunny''}
+
+\begin{align*}
+  H_{\text{Sunny}} &= -\sum_{x\in PlayTennis} \Pr[x] \log \left(\Pr[x]\right) \\
+                   &= - \frac{3}{5} \log\left(\frac{3}{5}\right) - \frac{2}{5} \log\left(\frac{2}{5}\right) \\
+                   &\approx 0.971
+\end{align*}
+
+\noindent
+\textbf{Temperature}: $IG_{\text{Temperature}} \approx 0.971 - 0.4 = \boxed{0.571}$
+
+  \begin{table}[h]
+    \centering
+    \caption{Temperature information gain}
+    \begin{tabular}{c|c|c}
+      \hline
+      Temperature  & \textit{PlayTennis} & Examples \\\hline\hline
+      \multirow{2}{*}{Hot}  & \textit{Yes} & N/A \\
+                            & \textit{No}  & D1, D2\\\hline
+      \multirow{2}{*}{Mild} & \textit{Yes} & D11 \\
+                            & \textit{No}  & D8 \\\hline
+      \multirow{2}{*}{Cool} & \textit{Yes} & D9 \\
+                            & \textit{No}  & N/A \\\hline
+    \end{tabular}
+  \end{table}
+
+  \begin{aligncustom}
+    H_{\text{Temp}} &= \frac{2}{5} \cdot 0 + \frac{2}{5} \cdot 1 + \frac{1}{5} \cdot 0 \\
+                    &= \frac{2}{5}
+  \end{aligncustom}
+
+\noindent
+\textbf{Humidity}: $IG_{\text{Humidity}} \approx 0.971 - 0 = \boxed{0.971} $
+
+  \begin{table}[h]
+    \centering
+    \caption{Temperature information gain}
+    \begin{tabular}{c|c|c}
+      \hline
+      Temperature  & \textit{PlayTennis} & Examples \\\hline\hline
+      \multirow{2}{*}{High}   & \textit{Yes} & N/A \\
+                              & \textit{No}  & D1, D2, D8\\\hline
+      \multirow{2}{*}{Normal} & \textit{Yes} & D9, D11 \\
+                              & \textit{No}  & N/A \\\hline
+    \end{tabular}
+  \end{table}
+
+  \begin{aligncustom}
+    H_{\text{Humidity}} &= \frac{3}{5} \cdot 0 + \frac{2}{5} \cdot 0 \\
+                        &= 0
+  \end{aligncustom}
+
+\noindent
+\textbf{Wind}: $IG_{\text{Wind}} \approx 0.971 - 0.951 = \boxed{0.020} $
+
+  \begin{table}[h]
+    \centering
+    \caption{Temperature information gain}
+    \begin{tabular}{c|c|c}
+      \hline
+      Temperature  & \textit{PlayTennis} & Examples \\\hline\hline
+      \multirow{2}{*}{Strong} & \textit{Yes} & D11 \\
+                              & \textit{No}  & D2 \\\hline
+      \multirow{2}{*}{Weak}   & \textit{Yes} & D9 \\
+                              & \textit{No}  & D1, D8 \\\hline
+    \end{tabular}
+  \end{table}
+
+  \begin{aligncustom}
+    H_{\text{Wind}} &= \frac{3}{5} \cdot \left( -\frac{1}{3}\log\left(\frac{1}{3}\right)  -\frac{2}{3}\log\left(\frac{2}{3}\right)\right) + \frac{2}{5} \cdot 1 \\
+                    &\approx \frac{3}{5} \cdot 0.918  + \frac{2}{5} \\
+                    &\approx 0.951
+  \end{aligncustom}
+
+\begin{center}
+  \textbf{\blue{Selected Variable}}: $\boxed{Humidity}$
+\end{center}
+
+\noindent
+{\large \textbf{Case~\#2}: ``Overcast''}
+
+\begin{align*}
+  H_{\text{Overcast}} &= -\sum_{x\in PlayTennis} \Pr[x] \log \left(\Pr[x] \right)\\
+                      &= - 0 \log(0) - 1 \log(1) \\
+                      &= 0
+\end{align*}
+
+Since the entropy of value ``Overcast'' is already~0, there is no remaining information to gain (i.e.,~gain for all remaining variables will be 0).  Therefore, the ``Overcast'' path is a leaf node for \textit{PlayTennis} ``Yes''.
+
+\noindent
+{\large \textbf{Case~\#3}: ``Rain''}
+
+\begin{align*}
+  H_{\text{Rain}} &= -\sum_{x\in PlayTennis} \Pr[x] \log \left(\Pr[x]\right) \\
+                  &= - \frac{2}{5} \log\left(\frac{2}{5}\right) - \frac{3}{5} \log\left(\frac{3}{5}\right) \\
+                  &\approx 0.971
+\end{align*}
+
+\noindent
+\textbf{Temperature}: $IG_{\text{Temperature}} \approx 0.971 - 0.951 = \boxed{0.020}$
+
+  \begin{table}[h]
+    \centering
+    \caption{Temperature information gain}
+    \begin{tabular}{c|c|c}
+      \hline
+      Temperature  & \textit{PlayTennis} & Examples \\\hline\hline
+      \multirow{2}{*}{Hot}  & \textit{Yes} & N/A \\
+                            & \textit{No}  & N/A \\\hline
+      \multirow{2}{*}{Mild} & \textit{Yes} & D4, D10 \\
+                            & \textit{No}  & D14 \\\hline
+      \multirow{2}{*}{Cool} & \textit{Yes} & D5 \\
+                            & \textit{No}  & D6 \\\hline
+    \end{tabular}
+  \end{table}
+
+  \begin{aligncustom}
+    H_{\text{Temp}} &= \frac{0}{5} \cdot \infty + \frac{3}{5} \cdot \left( -\frac{1}{3}\log\left(\frac{1}{3}\right)  -\frac{2}{3}\log\left(\frac{2}{3}\right)\right) + \frac{2}{5} \cdot 1 \\
+                    &\approx 0 + \frac{3}{5} \cdot 0.918  + \frac{2}{5} \\
+                    &\approx 0.951
+  \end{aligncustom}
+
+\noindent
+\textbf{Humidity}: $IG_{\text{Humidity}} \approx 0.971 - 0.951 = \boxed{0.020} $
+
+  \begin{table}[h]
+    \centering
+    \caption{Temperature information gain}
+    \begin{tabular}{c|c|c}
+      \hline
+      Temperature  & \textit{PlayTennis} & Examples \\\hline\hline
+      \multirow{2}{*}{High}   & \textit{Yes} & D4 \\
+                              & \textit{No}  & D14 \\\hline
+      \multirow{2}{*}{Normal} & \textit{Yes} & D5, D10 \\
+                              & \textit{No}  & D6 \\\hline
+    \end{tabular}
+  \end{table}
+
+  \begin{aligncustom}
+    H_{\text{Humidity}} &= \frac{2}{5} \cdot 1 + \frac{3}{5} \cdot \left( -\frac{1}{3}\log\left(\frac{1}{3}\right)  -\frac{2}{3}\log\left(\frac{2}{3}\right)\right) \\
+                    &\approx \frac{2}{5} + \frac{3}{5} \cdot 0.918 \\
+                    &\approx 0.951
+  \end{aligncustom}
+
+\noindent
+\textbf{Wind}: $IG_{\text{Wind}} \approx 0.971 - 0 = \boxed{0.971} $
+
+  \begin{table}[h]
+    \centering
+    \caption{Temperature information gain}
+    \begin{tabular}{c|c|c}
+      \hline
+      Temperature  & \textit{PlayTennis} & Examples \\\hline\hline
+      \multirow{2}{*}{Strong} & \textit{Yes} & N/A \\
+                              & \textit{No}  & D6, D14 \\\hline
+      \multirow{2}{*}{Weak}   & \textit{Yes} & D4, D5, D10 \\
+                              & \textit{No}  & N/A \\\hline
+    \end{tabular}
+  \end{table}
+
+  \begin{aligncustom}
+    H_{\text{Wind}} &= \frac{2}{5} \cdot 0 + \frac{3}{5} \cdot 0 \\
+                    &= 0
+  \end{aligncustom}
+
+\begin{center}
+  \textbf{\blue{Selected Variable}}: $\boxed{Wind}$
+\end{center}

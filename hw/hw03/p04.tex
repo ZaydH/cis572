@@ -1,0 +1,23 @@
+\begin{problem}
+  Suppose a bank makes loan decisions using two decision trees, one that uses attributes related to credit history and one that uses other demographic attributes. Each decision tree separately classifies a loan applicant as “High Risk” or “Low Risk.” The bank only offers a loan when both decision trees predict “Low Risk.”
+\end{problem}
+
+\begin{subproblem}
+  Describe an algorithm for converting this pair of decision trees into a single decision tree that makes the same predictions (that is, it predicts non-risky only when both of the original decision trees would have predicted non-risky).
+\end{subproblem}
+
+For notational convenience, name the decision tree constructed from credit history as~$T_1$ and the other decision tree as~$T_2$.
+
+A very simple algorithm is to start with~$T_1$ and replace any ``Low Risk'' leaf node in~$T_1$ with~$T_2$.  Clearly, if an example is ``High Risk'' in $T_1$, it is still ``High Risk'' in this combined tree since those root-to-leaf paths are unchanged.  In such cases, the value of $T_2$ is irrelevant to the final classification.  If the example is ``Low Risk'' in $T_1$, its final label matches the label from $T_2$.  The leaf replacement strategy described previously ensures that paradigm still holds in the combined tree.
+
+One could raise the concern that the same feature may appear more than once in a root-to-leaf path.  While that tree is not minimally compact, it does not affect the correctness.
+
+\begin{subproblem}
+  Let $n_1$ and $n_2$ be the number of leaves in the first and second decision trees, respectively. Provide an upper bound on $n$, the number of leaves in the single equivalent decision tree, expressed as a function of $n_1$ and $n_2$.
+\end{subproblem}
+
+\noindent
+\textbf{Answer}: $\boxed{O(n_1 \cdot n_2)}$
+
+\noindent
+\textbf{Explanation}: In the worst case, every leaf in $T_1$ may be ``Low Risk''.  Therefore, using the previously described algorithm, each leaf in $T_1$ would be replaced with $T_2$ resulting in $n_2$ leaves in the combined tree for every leaf in $T_1$.  That means the worst case is $n_1\cdot n_2$ leaves.

@@ -1,23 +1,57 @@
 \begin{problem}
-  Suppose a bank makes loan decisions using two decision trees, one that uses attributes related to credit history and one that uses other demographic attributes. Each decision tree separately classifies a loan applicant as “High Risk” or “Low Risk.” The bank only offers a loan when both decision trees predict “Low Risk.”
+  The multiclass perceptron maintains a weight vector and bias for each class: $(w_1, b_1),(w_2, b_2),\ldots,(w_k, b_k)$. When it makes an incorrect prediction, it adjusts the weight vectors of both the predicted class $\hat{y}$ and the correct class $y$:
+
+  \begin{aligncustom}
+    w_y &\leftarrow w_y + x \\
+    b_y &\leftarrow b_y + 1 \\
+    w_{\hat{y}} &\leftarrow w_{\hat{y}} - x \\
+    b_{\hat{y}} &\leftarrow b_{\hat{y}} - 1
+  \end{aligncustom}
+
+  Prove that the standard perceptron is equivalent to the multiclass perceptron when there are only 2~classes. In other words, show that the two methods always make the same predictions when given the same sequence of training examples.
 \end{problem}
 
-\begin{subproblem}
-  Describe an algorithm for converting this pair of decision trees into a single decision tree that makes the same predictions (that is, it predicts non-risky only when both of the original decision trees would have predicted non-risky).
-\end{subproblem}
+The two-class and standard perceptrons are identical if two conditions hold:
 
-For notational convenience, name the decision tree constructed from credit history as~$T_1$ and the other decision tree as~$T_2$.
-
-A very simple algorithm is to start with~$T_1$ and replace any ``Low Risk'' leaf node in~$T_1$ with~$T_2$.  Clearly, if an example is ``High Risk'' in $T_1$, it is still ``High Risk'' in this combined tree since those root-to-leaf paths are unchanged.  In such cases, the value of $T_2$ is irrelevant to the final classification.  If the example is ``Low Risk'' in $T_1$, its final label matches the label from $T_2$.  The leaf replacement strategy described previously ensures that paradigm still holds in the combined tree.
-
-One could raise the concern that the same feature may appear more than once in a root-to-leaf path.  While that tree is not minimally compact, it does not affect the correctness.
-
-\begin{subproblem}
-  Let $n_1$ and $n_2$ be the number of leaves in the first and second decision trees, respectively. Provide an upper bound on $n$, the number of leaves in the single equivalent decision tree, expressed as a function of $n_1$ and $n_2$.
-\end{subproblem}
+\begin{enumerate}
+  \item Initial formulation is identical
+  \item Updates to the model are always identical
+\end{enumerate}
 
 \noindent
-\textbf{Answer}: $\boxed{O(n_1 \cdot n_2)}$
+This proof shows these two conditions hold.
 
 \noindent
-\textbf{Explanation}: In the worst case, every leaf in $T_1$ may be ``Low Risk''.  Therefore, using the previously described algorithm, each leaf in $T_1$ would be replaced with $T_2$ resulting in $n_2$ leaves in the combined tree for every leaf in $T_1$.  That means the worst case is $n_1\cdot n_2$ leaves.
+{\Large \textbf{Initial Formulation}:}
+
+Eq.~\eqref{eq:P04:LabelFunc} defines the label assigned to an example $x_i$ in the two-class perceptron.
+
+\begin{equation}\label{eq:P04:LabelFunc}
+  y_{i} = \begin{cases}
+            y       & w_{y} \cdot x_{i} + b_{y} > w_{\hat{y}} \cdot x_i + b_{\hat{y}} \\
+            \hat{y} & \text{Otherwise}
+          \end{cases}
+\end{equation}
+
+\noindent
+Eq.~\eqref{eq:P04:LabelSimple} further simplifies this equation by defining $w_{*}=w_{y} - w_{\hat{y}}$ and $b_{*} = b_{y} - b_{\hat{y}}$.
+
+\begin{equation}\label{eq:P04:LabelSimple}
+  y_{i} = \begin{cases}
+            y       & w_{*} \cdot x_{i} + b_{*} > 0 \\
+            \hat{y} & \text{Otherwise}
+          \end{cases}
+\end{equation}
+
+Observe that Eq.~\eqref{eq:P04:LabelSimple} matches the form of the standard perceptron decision function.  Therefore, every two-class perceptron can be reformulated in the same form as a standard perceptron.
+
+\noindent
+{\Large \textbf{Identical Updates}:}
+
+Proving identical updates requires showing that the condition holds under ll cases.  There are only two cases for this example --- a correct prediction and an incorrect prediction.
+
+\noindent
+\textbf{Case~1}: \textit{Correct Prediction} -- The predicted and actual classes are identical.  Therefore, $w_{*}$ and $b_{*}$ is unchanged for the two class case since $w_{*}^{(t+1)} = w^{(t)}_{*} = w^{(t)}_{*} + x -x$ and $b^{(t+1)}_{*} = b^{(t)}_{*} = b^{(t)}_{*} + 1 - 1$. This is the same as the update rule in Algorithm~5 of the slides.
+
+\noindent
+\textbf{Case~2}: \textit{Incorrect Prediction} --

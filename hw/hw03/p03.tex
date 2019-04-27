@@ -1,23 +1,102 @@
 \begin{problem}
-  Suppose a bank makes loan decisions using two decision trees, one that uses attributes related to credit history and one that uses other demographic attributes. Each decision tree separately classifies a loan applicant as “High Risk” or “Low Risk.” The bank only offers a loan when both decision trees predict “Low Risk.”
+  Suppose we have some binary input data, ${x_i \in \{0, 1\}}$. The training data is shown in Table~\ref{tab:P03:TrainingData}.
+
+
+\noindent
+Note that we have two outputs per training example.
+
+Let us first embed each $x_i$ into 2D using the following basis function:
+
+\[\phi(0) = (1, 0)^{T}, \phi(1) = (0, 1)^{T} \]
+
+Consider a linear regression model over $\phi$:
+
+\[\hat{\mathbf{y}} = \mathbf{W}^{T} \phi(x) \]
+
+\noindent
+where $\mathbf{W}$ is a $2\times2$ matrix. Compute $\mathbf{W}$ that has the maximum likelihood on the training data (called the maximum likelihood estimation). Show your calculation details.
+
+\begin{table}[h]
+  \centering
+  \caption{Training data for question~\#3}\label{tab:P03:TrainingData}
+  \begin{tabular}{c|c}
+    x & y \\\hline
+    0 & $(-1, -1)^{T}$\\
+    0 & $(-1, -2)^{T}$\\
+    0 & $(-2, -1)^{T}$\\
+    1 & $(1, 1)^{T}$\\
+    1 & $(1, 2)^{T}$\\
+    1 & $(2, 1)^{T}$\\
+  \end{tabular}
+\end{table}
+
+(Hint: \textnormal{Use ordinary least squares to find the analytic solution. The usual output vector over training data y we have in class is now a matrix.})
 \end{problem}
 
-\begin{subproblem}
-  Describe an algorithm for converting this pair of decision trees into a single decision tree that makes the same predictions (that is, it predicts non-risky only when both of the original decision trees would have predicted non-risky).
-\end{subproblem}
-
-For notational convenience, name the decision tree constructed from credit history as~$T_1$ and the other decision tree as~$T_2$.
-
-A very simple algorithm is to start with~$T_1$ and replace any ``Low Risk'' leaf node in~$T_1$ with~$T_2$.  Clearly, if an example is ``High Risk'' in $T_1$, it is still ``High Risk'' in this combined tree since those root-to-leaf paths are unchanged.  In such cases, the value of $T_2$ is irrelevant to the final classification.  If the example is ``Low Risk'' in $T_1$, its final label matches the label from $T_2$.  The leaf replacement strategy described previously ensures that paradigm still holds in the combined tree.
-
-One could raise the concern that the same feature may appear more than once in a root-to-leaf path.  While that tree is not minimally compact, it does not affect the correctness.
-
-\begin{subproblem}
-  Let $n_1$ and $n_2$ be the number of leaves in the first and second decision trees, respectively. Provide an upper bound on $n$, the number of leaves in the single equivalent decision tree, expressed as a function of $n_1$ and $n_2$.
-\end{subproblem}
+Since $\phi$ maps $x_i$ onto orthogonal $(1,0)^{T}$ and $(0,1)^{T}$, the problem is significantly simplified.  This is due to the fact that the prediction for case $x=0$ only relies on the first row of $\mathbf{W}$ while the $x=1$ only relies on the second row of $\mathbf{W}$.
 
 \noindent
-\textbf{Answer}: $\boxed{O(n_1 \cdot n_2)}$
+\textbf{Case~1}: $x=0$
+
+\[ J = \sum_{i=1}^{m} \sum_{j=1}^{2} \left(w_{j} - y_{i,j}\right)^2 \]
 
 \noindent
-\textbf{Explanation}: In the worst case, every leaf in $T_1$ may be ``Low Risk''.  Therefore, using the previously described algorithm, each leaf in $T_1$ would be replaced with $T_2$ resulting in $n_2$ leaves in the combined tree for every leaf in $T_1$.  That means the worst case is $n_1\cdot n_2$ leaves.
+Take the gradient of $J$ and set it to the $\vec{\mathbf{0}}$.
+
+\[
+\begin{bmatrix}
+  \sum_{i=1}^m 2\lvert w_1 - y_{i,1}\rvert \\
+  \sum_{i=1}^m 2\lvert w_2 - y_{i,2}\rvert
+\end{bmatrix} =
+\begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+\]
+
+\noindent
+Since all $y_{i,j}$ have the same sign, the absolute values can be dropped.  The problem can be solved to show:
+
+\begin{aligncustom}
+  \begin{bmatrix}
+    3w_1\\
+    3w_2
+  \end{bmatrix} &=
+  \begin{bmatrix}
+    -4 \\
+    -4
+  \end{bmatrix} \\
+  \begin{pmatrix}
+    w_1 & w_2
+  \end{pmatrix}^{T} &=
+  \begin{pmatrix}
+    -\frac{4}{3} & -\frac{4}{3}
+  \end{pmatrix}^{T}
+\end{aligncustom}
+
+\noindent
+\textbf{Case~2}: $x=1$
+
+This case is identical to Case~1 except that the signs are positive.  Therefore, the weight vector is:
+
+\[
+  \begin{pmatrix}
+    w_1 & w_2
+  \end{pmatrix}^{T} =
+  \begin{pmatrix}
+    \frac{4}{3} & \frac{4}{3}
+  \end{pmatrix}^{T}
+\]
+
+\noindent
+\textbf{Conclusion}: The final value of $\mathbf{W}$ is formed form the concatenation of the vectors in Case~1 and Case~2 and is shown below.
+
+\[
+\boxed{
+  \mathbf{W} =
+  \begin{bmatrix}
+    -\frac{4}{3} & -\frac{4}{3} \\
+     \frac{4}{3} &  \frac{4}{3}
+  \end{bmatrix}
+}
+\]

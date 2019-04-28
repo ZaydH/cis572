@@ -44,7 +44,7 @@ Consider the following three accounts to be labeled:
   Before using nearest neighbor methods to make predictions, how would you recommend processing or transforming the data? Why? Make any changes you think appropriate to the data before continuing on to the next two parts.
 \end{subproblem}
 
-K-NN relies on a distance metric to quantify similarity between two examples.  If features are not changed to a consistent scales, necessarily some features will have higher weight than other.  In some cases, that may be advantageous but doing so blindly is dangerous and may yield dubious classifications.
+K-NN relies on a distance metric to quantify similarity between two examples.  If features are not changed to a consistent scales, necessarily some features will have inherently higher weight than other --- in particular those with significant higher magnitude.  In some cases, that may be advantageous but doing so blindly is generally dangerous and a bad idea since it may yield dubious classifications.
 
 The two most common approaches for transforming features are \textit{standardization} and \textit{normalization}.  Normalization is sensitive to outliers but creates relatively well-bounded feature ranges.  Since this data appears free of outliers, it is used for this problem. The \featureOp\ data for Tables~\ref{tab:P01:RawTrain} and~\ref{tab:P01:RawUnlabel} are in Tables~\ref{tab:P01:NormalTrain} and~\ref{tab:P01:NormalUnlabel} respectively.
 

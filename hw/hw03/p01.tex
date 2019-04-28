@@ -1,9 +1,11 @@
+\newcommand{\featureOp}{normalized}
+
 \begin{problem}
 An analyst wants to classify a number of customers based on some given attributes: total number of accounts, credit utilization (amount of used credit divided by total credit amount), percentage of on-time payments, age of credit history, and inquiries (number of time that the customer requested a new credit account, whether accepted or not). The analyst acquired some labeled information as shown in the following table:
 
 \begin{table}[h]
   \centering
-  \caption{Raw training data for problem~\#1}\label{tab:P01:RawTraining}
+  \caption{Raw training data for problem~\#1}\label{tab:P01:RawTrain}
   \begin{tabular}{|c||c|c|c|c|c|c|}
     \hline
     ID & Total    & Utilization & Payment & Age of History & Inquiries & Label \\
@@ -26,7 +28,7 @@ Consider the following three accounts to be labeled:
 
 \begin{table}[h]
   \centering
-  \caption{Accounts to be labeled}\label{tab:P01:AccountsToLabel}
+  \caption{Raw unlabeled accounts data for problem~\#1}\label{tab:P01:RawUnlabel}
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
     Total    & Utilization & Payment & Age of History & Inquiries & Label \\
@@ -44,32 +46,81 @@ Consider the following three accounts to be labeled:
 
 K-NN relies on a distance metric to quantify similarity between two examples.  If features are not changed to a consistent scales, necessarily some features will have higher weight than other.  In some cases, that may be advantageous but doing so blindly is dangerous and may yield dubious classifications.
 
-The two most common approaches for transforming features are \textit{standardization} and \textit{normalization}.
+The two most common approaches for transforming features are \textit{standardization} and \textit{normalization}.  Normalization is sensitive to outliers but creates relatively well-bounded feature ranges.  Since this data appears free of outliers, it is used for this problem. The \featureOp\ data for Tables~\ref{tab:P01:RawTrain} and~\ref{tab:P01:RawUnlabel} are in Tables~\ref{tab:P01:NormalTrain} and~\ref{tab:P01:NormalUnlabel} respectively.
 
 \begin{table}[h]
   \centering
-  \caption{Normalized training data for problem~\#1}\label{tab:P01:RawTraining}
+  \caption{Problem~\#\arabic{problemCount} \featureOp\ training data}\label{tab:P01:NormalTrain}
   \begin{tabular}{|c||c|c|c|c|c|c|}
     \hline
     ID & Total    & Utilization & Payment & Age of History & Inquiries & Label \\
        & Accounts &             & History & (days)         &           & \\\hline\hline
-    1  & 8   & 15\% & 100\% & 1000 & 5 & GOOD \\\hline
-    2  & 15  & 19\% & 90\% & 2500 & 8 & BAD \\\hline
-    3  & 10  & 35\% & 100\% & 500 & 10 & BAD \\\hline
-    4  & 11  & 40\% & 95\% & 2000 & 6 & BAD \\\hline
-    5  & 12  & 10\% & 99\% & 3000 & 6 & GOOD \\\hline
-    6  & 18  & 15\% & 100\% & 2000 & 5 & GOOD \\\hline
-    7  & 3   & 21\% & 100\% & 1500 & 7 & BAD \\\hline
-    8  & 14  & 4\% & 100\% & 3500 & 5 & GOOD \\\hline
-    9  & 13  & 5\% & 100\% & 3000 & 3 & GOOD \\\hline
-    10 & 6   & 25\% & 94\% & 2800 & 9 & BAD \\\hline
+    \input{src/tables/p01_train_normalized}
   \end{tabular}
 \end{table}
 
+\begin{table}[h]
+  \centering
+  \caption{Problem~\#\arabic{problemCount} \featureOp\ unlabeled data}\label{tab:P01:NormalUnlabel}
+  \begin{tabular}{|c|c|c|c|c||c|}
+    \hline
+    Total    & Utilization & Payment & Age of History & Inquiries & ID \\
+    Accounts &             & History & (days)         &           & \\\hline\hline
+    \input{src/tables/p01_unlabeled_normalized}
+  \end{tabular}
+\end{table}
+
+\FloatBarrier
 \begin{subproblem}
-  What are the predicted labels P1, P2, and P3 using 1-NN with L1 distance? Assume that percentages are represented as their corresponding decimal numbers, so 95\% = 0.95. Show your work.
+  What are the predicted labels P1, P2, and P3 using 1-NN with $L_1$ distance? Assume that percentages are represented as their corresponding decimal numbers, so 95\% = 0.95. Show your work.
 \end{subproblem}
 
+The predicted labels for the unlabeled data in Table~\ref{tab:P01:NormalUnlabel} is shown in Table~\ref{tab:P01:b:PredictedLabels}.  The calculations of the $L_1$ loss for P1, P2, and P3 are in Tables~\ref{tab:P01:b:P1},~\ref{tab:P01:b:P2}, and~\ref{tab:P01:b:P3} respectively.  Observe that for each unlabeled example, the minimum $L_1$ loss is in bold.
+
+\begin{table}[h]
+  \centering
+  \caption{Predicted labels for Problem~\arabic{problemCount}(\alph{subProbCount})}\label{tab:P01:b:PredictedLabels}
+  \begin{tabular}{|c|c|}
+    \hline
+    Example & Predicted Label \\\hline\hline
+    \input{src/tables/p01_part_b_pred}
+  \end{tabular}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \caption{$L_1$ loss by feature for the \featureOp\ P1 data}\label{tab:P01:b:P1}
+  \begin{tabular}{|c||c|c|c|c|c||c|}
+    \hline
+    ID & Total    & Utilization & Payment & Age of History & Inquiries & Total \\
+       & Accounts &             & History & (days)         &           & Loss \\\hline\hline
+    \input{src/tables/p01_part_b_p1_err}
+  \end{tabular}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \caption{$L_1$ loss by feature for the \featureOp\ P2 data}\label{tab:P01:b:P2}
+  \begin{tabular}{|c||c|c|c|c|c||c|}
+    \hline
+    ID & Total    & Utilization & Payment & Age of History & Inquiries & Total \\
+       & Accounts &             & History & (days)         &           & Loss \\\hline\hline
+    \input{src/tables/p01_part_b_p2_err}
+  \end{tabular}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \caption{$L_1$ loss by feature for the \featureOp\ P3 data}\label{tab:P01:b:P3}
+  \begin{tabular}{|c||c|c|c|c|c||c|}
+    \hline
+    ID & Total    & Utilization & Payment & Age of History & Inquiries & Total \\
+       & Accounts &             & History & (days)         &           & Loss \\\hline\hline
+    \input{src/tables/p01_part_b_p3_err}
+  \end{tabular}
+\end{table}
+
+\FloatBarrier
 \begin{subproblem}
   Keep the information of customers 7, 8, 9, and 10 as validation data, and find the best K value for the K-NN algorithm. If the best value of $K$ is not equal to 1, find the new predictions for P1, P2, and P3. Show your work.
 \end{subproblem}

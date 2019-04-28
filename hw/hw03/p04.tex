@@ -11,6 +11,9 @@
   Prove that the standard perceptron is equivalent to the multiclass perceptron when there are only 2~classes. In other words, show that the two methods always make the same predictions when given the same sequence of training examples.
 \end{problem}
 
+\newcommand{\cA}{_{1}}
+\newcommand{\cB}{_{-1}}
+
 The two-class and standard perceptrons are identical if two conditions hold:
 
 \begin{enumerate}
@@ -27,31 +30,32 @@ This proof shows these two conditions hold.
 Eq.~\eqref{eq:P04:LabelFunc} defines the label assigned to an example $x_i$ in the two-class perceptron.
 
 \begin{equation}\label{eq:P04:LabelFunc}
-  y_{i} = \begin{cases}
-            y       & w_{y} \cdot x_{i} + b_{y} > w_{\hat{y}} \cdot x_i + b_{\hat{y}} \\
-            \hat{y} & \text{Otherwise}
-          \end{cases}
+  \hat{y}_i = \begin{cases}
+                y\cA & w\cA \cdot x_{i} + b\cA > w\cB \cdot x_i + b\cB \\
+                y\cB & \text{Otherwise}
+              \end{cases}
 \end{equation}
 
 \noindent
-Eq.~\eqref{eq:P04:LabelSimple} further simplifies this equation by defining $w_{*}=w_{y} - w_{\hat{y}}$ and $b_{*} = b_{y} - b_{\hat{y}}$.
+Eq.~\eqref{eq:P04:LabelSimple} further simplifies this equation by defining $w_{*}=w\cA - w\cB$ and $b_{*} = b\cA - b\cB$.
 
 \begin{equation}\label{eq:P04:LabelSimple}
-  y_{i} = \begin{cases}
-            y       & w_{*} \cdot x_{i} + b_{*} > 0 \\
-            \hat{y} & \text{Otherwise}
-          \end{cases}
+  \hat{y}_{i} = \begin{cases}
+                  y\cA & w_{*} \cdot x_{i} + b_{*} > 0 \\
+                  y\cB & \text{Otherwise}
+                \end{cases}
 \end{equation}
 
+\noindent
 Observe that Eq.~\eqref{eq:P04:LabelSimple} matches the form of the standard perceptron decision function.  Therefore, every two-class perceptron can be reformulated in the same form as a standard perceptron.
 
 \noindent
 {\Large \textbf{Identical Updates}:}
 
-Proving identical updates requires showing that the condition holds under ll cases.  There are only two cases for this example --- a correct prediction and an incorrect prediction.
+Proving identical updates requires showing that the condition holds under two cases.  There are only two cases for this example --- a correct prediction and an incorrect prediction.
 
 \noindent
-\textbf{Case~1}: \textit{Correct Prediction} -- The predicted and actual classes are identical.  Therefore, $w_{*}$ and $b_{*}$ is unchanged for the two class case since $w_{*}^{(t+1)} = w^{(t)}_{*} = w^{(t)}_{*} + x -x$ and $b^{(t+1)}_{*} = b^{(t)}_{*} = b^{(t)}_{*} + 1 - 1$. This is the same as the update rule in Algorithm~5 of the slides.
+\textbf{Case~1}: \textit{Correct Prediction} --- The predicted and actual classes are identical.  Therefore, $w_{*}$ and $b_{*}$ is unchanged for the two class case since $w_{*}^{(t+1)} = w^{(t)}_{*} = w^{(t)}_{*} + x -x$ and $b^{(t+1)}_{*} = b^{(t)}_{*} = b^{(t)}_{*} + 1 - 1$. This is the same as the update rule in Algorithm~5 of the slides.
 
 \noindent
-\textbf{Case~2}: \textit{Incorrect Prediction} --
+\textbf{Case~2}: \textit{Incorrect Prediction} ---

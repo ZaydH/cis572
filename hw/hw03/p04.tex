@@ -11,51 +11,76 @@
   Prove that the standard perceptron is equivalent to the multiclass perceptron when there are only 2~classes. In other words, show that the two methods always make the same predictions when given the same sequence of training examples.
 \end{problem}
 
-\newcommand{\cA}{_{1}}
-\newcommand{\cB}{_{-1}}
+\newcommand{\cA}{_{+}}
+\newcommand{\cB}{_{-}}
+\newcommand{\subC}{_{*}}
+\newcommand{\tS}[1]{^{(#1)}}
 
-The two-class and standard perceptrons are identical if two conditions hold:
+  The decision function for a two-class perceptron is shown in Eq.~\eqref{eq:P04:BaseDecision}.
 
-\begin{enumerate}
-  \item Initial formulation is identical
-  \item Updates to the model are always identical
+  \begin{equation}\label{eq:P04:BaseDecision}
+    \hat{y}(x) = \begin{cases}
+                   y\cA & w\cA \cdot x + b\cA > w\cB \cdot x + b\cB \\
+                   y\cB & \text{Otherwise}
+                 \end{cases}
+  \end{equation}
+
+  \noindent
+  It can be simplified to the formulation in Eq.~\eqref{eq:P04:SimpleDecision}.  Note that $w\subC = w\cA - w\cB$ and $b\subC = b\cA - b\cB$.  The following proof exclusively uses this simplified formulation.
+
+  \begin{equation}\label{eq:P04:SimpleDecision}
+    \hat{y}(x) = \begin{cases}
+                    y\cA & w\subC \cdot x + b\subC > 0 \\
+                    y\cB & \text{Otherwise}
+                 \end{cases}
+  \end{equation}
+
+\begin{proof}
+  \textit{By induction}.  The proof demonstrates that for every training example, $x\tS{t}$ where $t=1,2,\ldots$, the decision function of the two-class and standard perceptrons are identical making the two learners necessarily identical.
+
+  \noindent
+\textbf{Base Case}:  There are two primary bases cases.  The case of $t=0$ is added for completeness.
+
+\begin{enumerate}[(a)]
+  \item $t=0$ --- Before Any Training Examples.  $w\tS{0}\cA=w\tS{0}\cB=w\tS{0}\cA-w\tS{0}\cB=w\tS{0}\subC=\vec{0}$, where $\vec{0}$ is the zero vector.  $b\tS{0}\cA$, $b\tS{0}\cB$, and $b\tS{0}\subC$ are similarly~$0$.  This is identical to the standard perceptron.
+
+  \item $t=1$ --- \textit{Correct} classification.  $w\tS{t+1}\subC=w\tS{t}\subC + x\tS{t} - x\tS{t} = w\tS{t}$.  Therefore, the weight vector is unchanged.  Trivially, the offset $b\subC$ is also unchanged.  This matches the standard perceptron.  Observe that for \textit{all} $t\geq1$, a correct classification never changes $w\subC$ and $b\subC$ so for brevity correct classification is not discussed in the inductive step.
+
+  \item $t=1$ --- \textit{Incorrect} classification.  $w\tS{1}\subC = x\tS{1} - \left(-x\tS{1}\right) = 2x\tS{1}$ for a misclassified positive example, and $w\tS{1}= -x\tS{1} - x\tS{1} = -2x\tS{1}$ for a misclassified negative example.  $b\subC$ is~$2$ and~$-2$ for a misclassified positive and negative respectively.
+
+    Eq.~\eqref{eq:P04:T1Pos} shows the decision function $x\tS{1}$ being a misclassified positive example. The distributed~$2$ has no effect on the classification and can be ignored/divided out.  Therefore, the decision function is again the same as the standard perceptron.  The formulation for a misclassified negative is not shown since it is essentially the same as the positive case with the only difference being $x\tS{1}$ and $1$ in Eq.~\eqref{eq:P04:T1Pos} are negated.
 \end{enumerate}
 
-\noindent
-This proof shows these two conditions hold.
-
-\noindent
-{\Large \textbf{Initial Formulation}:}
-
-Eq.~\eqref{eq:P04:LabelFunc} defines the label assigned to an example $x_i$ in the two-class perceptron.
-
-\begin{equation}\label{eq:P04:LabelFunc}
-  \hat{y}_i = \begin{cases}
-                y\cA & w\cA \cdot x_{i} + b\cA > w\cB \cdot x_i + b\cB \\
-                y\cB & \text{Otherwise}
-              \end{cases}
+\begin{equation}\label{eq:P04:T1Pos}
+  \hat{y}\tS{1}(x) = \begin{cases}
+                       y\cA & 2\left(x\tS{1}\cdot x + 1\right) > 0 \\
+                       y\cB & \text{Otherwise}
+                     \end{cases}
 \end{equation}
 
 \noindent
-Eq.~\eqref{eq:P04:LabelSimple} further simplifies this equation by defining $w_{*}=w\cA - w\cB$ and $b_{*} = b\cA - b\cB$.
+\textbf{Assume}: For $t=k$, standard \& two-class perceptrons have same the decision function (see Eq.~\eqref{eq:P04:Tk}).
 
-\begin{equation}\label{eq:P04:LabelSimple}
-  \hat{y}_{i} = \begin{cases}
-                  y\cA & w_{*} \cdot x_{i} + b_{*} > 0 \\
-                  y\cB & \text{Otherwise}
-                \end{cases}
+\begin{equation}\label{eq:P04:Tk}
+  \hat{y}\tS{k}(x) = \begin{cases}
+                       y\cA & 2\left(w\tS{k}\subC \cdot x + b\tS{k}\subC\right) > 0 \\
+                       y\cB & \text{Otherwise}
+                     \end{cases}
 \end{equation}
 
 \noindent
-Observe that Eq.~\eqref{eq:P04:LabelSimple} matches the form of the standard perceptron decision function.  Therefore, every two-class perceptron can be reformulated in the same form as a standard perceptron.
+Eq.~\eqref{eq:P04:Tk} uses the ``distributed-2'' notation similar to Eq.~\eqref{eq:P04:T1Pos} for the two-class perceptron.
 
 \noindent
-{\Large \textbf{Identical Updates}:}
+\textbf{Inductive Step}: $t=k+1$. If example $x\tS{k+1}$ is positive and misclassified, the decision function is updated as shown in Eq.~\eqref{eq:P04:TkPlus1}. This is again identical to the standard perceptron.
 
-Proving identical updates requires showing that the condition holds under two cases.  There are only two cases for this example --- a correct prediction and an incorrect prediction.
+\begin{equation}\label{eq:P04:TkPlus1}
+  \hat{y}\tS{k+1}(x) = \begin{cases}
+    y\cA & 2\bigg(\left(w\tS{k}\subC + x\tS{k+1}\right)\cdot x + \left(b\tS{k}\subC+1\right)\bigg) > 0 \\
+                         y\cB & \text{Otherwise}
+                       \end{cases}
+\end{equation}
 
 \noindent
-\textbf{Case~1}: \textit{Correct Prediction} --- The predicted and actual classes are identical.  Therefore, $w_{*}$ and $b_{*}$ is unchanged for the two class case since $w_{*}^{(t+1)} = w^{(t)}_{*} = w^{(t)}_{*} + x -x$ and $b^{(t+1)}_{*} = b^{(t)}_{*} = b^{(t)}_{*} + 1 - 1$. This is the same as the update rule in Algorithm~5 of the slides.
-
-\noindent
-\textbf{Case~2}: \textit{Incorrect Prediction} ---
+Proving the subcase of $k+1$ being a misclassified negative example follows this same procedure and is not shown for brevity.
+\end{proof}

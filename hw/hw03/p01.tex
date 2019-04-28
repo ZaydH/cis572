@@ -105,4 +105,55 @@ The predicted labels for the unlabeled data in Table~\ref{tab:P01:NormalUnlabel}
   Keep the information of customers 7, 8, 9, and 10 as validation data, and find the best K value for the K-NN algorithm. If the best value of $K$ is not equal to 1, find the new predictions for P1, P2, and P3. Show your work.
 \end{subproblem}
 
+For even valued~$K$, label ties are possible.  In this homework, all ties were broken in favor of ``BAD.''  All tables and calculations are generated with a Python~3 script that can be provided on request.
 
+Table~\ref{tab:P01:c:AccVsK} shows the accuracy on the validation set for all possible values of $K$ with the best value~(2) shown in \textbf{bold}.  The $L_1$ for each feature on each of the validation examples is shown in Tables~\ref{tab:P01:c:Valid7},~\ref{tab:P01:c:Valid8},~\ref{tab:P01:c:Valid9}, and~\ref{tab:P01:c:Valid10}.  Tables~\ref{tab:P01:c:BestNeighK1} through~\ref{tab:P01:c:BestNeighK6} show the selected ``best neighbors'' and predicted label for each validation example for $K$ equal to~1 through~6 respectively.
+
+The predicted labels along with the ``best neighbors'' for~P1,~P2, and~P3 for $K$ (2) selected on the validation set is shown in Table~\ref{tab:P01:c:UnlabelBestK}.
+
+\begin{table}[h]
+  \centering
+  \caption{Validation accuracy for different values of $K$}\label{tab:P01:c:AccVsK}
+  \begin{tabular}{|c|c|}
+    \hline
+    $K$ & Accuracy \\\hline\hline
+    \input{src/tables/p01_c_best_k}
+  \end{tabular}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \caption{Predicted labels for the unlabeled set with the best $K$}\label{tab:P01:c:UnlabelBestK}
+  \begin{tabular}{|c||c|c|}
+    \hline
+    ID & Best        & Predicted \\
+       & Neighbor(s) & Label  \\\hline\hline
+    \input{src/tables/p01_c_best_neighbors_unlabel}
+  \end{tabular}
+\end{table}
+
+\@for\id:={7,8,9,10}\do{
+  \begin{table}[ht]
+    \centering
+    \caption{$L_1$ loss by feature for the \featureOp\ ID \#\id\ validation data}\label{tab:P01:c:Valid\id}
+    \begin{tabular}{|c||c|c|c|c|c||c|}
+      \hline
+      ID & Total    & Utilization & Payment & Age of History & Inquiries & Total \\
+         & Accounts &             & History & (days)         &           & Loss \\\hline\hline
+      \input{src/tables/p01_c_id_\id_loss}
+    \end{tabular}
+  \end{table}
+}
+
+\@for\id:={1,2,3,4,5,6}\do{
+  \begin{table}[ht]
+    \centering
+    \caption{Best neighbors, predict label, and actual label for validation examples with $K=\id$}\label{tab:P01:c:BestNeighK\id}
+    \begin{tabular}{|c||c|c|c|}
+      \hline
+      ID & Best      & Predicted & Actual \\
+         & Neighbors & Label     & Label \\\hline\hline
+      \input{src/tables/p01_c_best_neighbors_k=\id}
+    \end{tabular}
+  \end{table}
+}

@@ -48,7 +48,7 @@ K-NN relies on a distance metric to quantify similarity between two examples.  I
 
 The two most common approaches for transforming features are \textit{standardization} and \textit{normalization}.  Normalization is sensitive to outliers but creates relatively well-bounded feature ranges.  Since this data appears free of outliers, it is used for this problem. The \featureOp\ data for Tables~\ref{tab:P01:RawTrain} and~\ref{tab:P01:RawUnlabel} are in Tables~\ref{tab:P01:NormalTrain} and~\ref{tab:P01:NormalUnlabel} respectively.
 
-\begin{table}[h]
+\begin{table}[ht]
   \centering
   \caption{Problem~\#\arabic{problemCount} \featureOp\ training data}\label{tab:P01:NormalTrain}
   \begin{tabular}{|c||c|c|c|c|c|c|}
@@ -59,7 +59,7 @@ The two most common approaches for transforming features are \textit{standardiza
   \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[ht]
   \centering
   \caption{Problem~\#\arabic{problemCount} \featureOp\ unlabeled data}\label{tab:P01:NormalUnlabel}
   \begin{tabular}{|c|c|c|c|c||c|}
@@ -87,38 +87,18 @@ The predicted labels for the unlabeled data in Table~\ref{tab:P01:NormalUnlabel}
   \end{tabular}
 \end{table}
 
-\begin{table}[h]
-  \centering
-  \caption{$L_1$ loss by feature for the \featureOp\ P1 data}\label{tab:P01:b:P1}
-  \begin{tabular}{|c||c|c|c|c|c||c|}
-    \hline
-    ID & Total    & Utilization & Payment & Age of History & Inquiries & Total \\
-       & Accounts &             & History & (days)         &           & Loss \\\hline\hline
-    \input{src/tables/p01_part_b_p1_err}
-  \end{tabular}
-\end{table}
-
-\begin{table}[h]
-  \centering
-  \caption{$L_1$ loss by feature for the \featureOp\ P2 data}\label{tab:P01:b:P2}
-  \begin{tabular}{|c||c|c|c|c|c||c|}
-    \hline
-    ID & Total    & Utilization & Payment & Age of History & Inquiries & Total \\
-       & Accounts &             & History & (days)         &           & Loss \\\hline\hline
-    \input{src/tables/p01_part_b_p2_err}
-  \end{tabular}
-\end{table}
-
-\begin{table}[h]
-  \centering
-  \caption{$L_1$ loss by feature for the \featureOp\ P3 data}\label{tab:P01:b:P3}
-  \begin{tabular}{|c||c|c|c|c|c||c|}
-    \hline
-    ID & Total    & Utilization & Payment & Age of History & Inquiries & Total \\
-       & Accounts &             & History & (days)         &           & Loss \\\hline\hline
-    \input{src/tables/p01_part_b_p3_err}
-  \end{tabular}
-\end{table}
+\@for\id:={1,2,3}\do{
+  \begin{table}[ht]
+    \centering
+    \caption{$L_1$ loss by feature for the \featureOp\ P\id\ data}\label{tab:P01:b:P\id}
+    \begin{tabular}{|c||c|c|c|c|c||c|}
+      \hline
+      ID & Total    & Utilization & Payment & Age of History & Inquiries & Total \\
+         & Accounts &             & History & (days)         &           & Loss \\\hline\hline
+      \input{src/tables/p01_part_b_p\id_err}
+    \end{tabular}
+  \end{table}
+}
 
 \FloatBarrier
 \begin{subproblem}

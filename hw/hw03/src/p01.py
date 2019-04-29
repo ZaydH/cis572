@@ -17,6 +17,7 @@ def extract_dataset(path: Path, transform_fields: Optional[dict] = None, add_id_
     labels = [l[-1] for l in spl]
     vals = torch.Tensor([[float(v.strip()) for v in l[:-1]] for l in spl])
     vals, transform_fields = normalize(vals, transform_fields)
+    # vals, transform_fields = standardize(vals, transform_fields)
 
     out_path = TABLES_PATH / (path.stem + "_normalized.tex")
     export_dataset(vals, labels, out_path, add_id_col)

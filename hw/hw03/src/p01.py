@@ -5,22 +5,22 @@ from collections import Counter
 
 import numpy as np
 import torch
-from typing import Tuple
+from typing import Optional, Tuple
 
 TABLES_PATH = Path("tables")
 
 
-def extract_dataset(path: Path, mins=None, maxs=None, add_id_col: bool = False):
+def extract_dataset(path: Path, transform_fields: Optional[dict] = None, add_id_col: bool = False):
     with open(path, "r") as f_in:
         lines = f_in.read().splitlines()
     spl = [l.split(",") for l in lines]
     labels = [l[-1] for l in spl]
     vals = torch.Tensor([[float(v.strip()) for v in l[:-1]] for l in spl])
-    vals, mins, maxs = normalize(vals, mins, maxs)
+    vals, transform_fields = normalize(vals, transform_fields)
 
     out_path = TABLES_PATH / (path.stem + "_normalized.tex")
     export_dataset(vals, labels, out_path, add_id_col)
-    return vals, labels, mins, maxs
+    return vals, labels, transform_fields
 
 
 def export_dataset(x: torch.Tensor, y, out_file: Path, add_id_col: bool = False):
@@ -42,15 +42,20 @@ def _calc_l1_loss_tensor(train_x: torch.Tensor, sample: torch.Tensor) -> Tuple[t
     return l1, torch.sum(l1, dim=1)
 
 
-def normalize(vals: torch.Tensor, mins=None, maxs=None) -> Tuple[torch.Tensor, ...]:
+def normalize(vals: torch.Tensor, fields: Optional[dict] = None) -> Tuple[torch.Tensor, dict]:
     r"""
     Performs min/max normalization.  Allows specified of \p mins and \p maxs so test set has same
     normalization as training set.
     """
-    if mins is None: mins = torch.min(vals, dim=0)[0]
-    vals -= mins
-    if maxs is None: maxs = torch.max(vals, dim=0)[0]
-    return vals / maxs, mins, maxs
+    if fields is None: fields = dict()
+    mins_key, maxs_key = "mins", "maxs"
+    if mins_key not in fields:
+        fields[mins_key] = torch.min(vals, dim=0)[0]
+    vals -= fields[mins_key]
+
+    if maxs_key not in fields:
+        fields[maxs_key] = torch.max(vals, dim=0)[0]
+    return vals / fields[maxs_key], fields
 
 
 def predict_part_b(train_x, train_y, unlabel_x, base_file_path: str):
@@ -194,8 +199,8 @@ def predict_unlabel_with_k(k: int, train_x: torch.Tensor, train_y: torch.Tensor,
 
 
 def _main(train: Path, unlabel: Path):
-    train_x, train_y, mins, maxs = extract_dataset(train, add_id_col=True)
-    unlabel_x, _, _, _ = extract_dataset(unlabel, mins, maxs)
+    train_x, train_y, transform_fields = extract_dataset(train, add_id_col=True)
+    unlabel_x, _, _ = extract_dataset(unlabel, transform_fields)
 
     predict_part_b(train_x, train_y, unlabel_x, TABLES_PATH / "p01_part_b_")
 

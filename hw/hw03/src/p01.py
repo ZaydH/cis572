@@ -58,6 +58,22 @@ def normalize(vals: torch.Tensor, fields: Optional[dict] = None) -> Tuple[torch.
     return vals / fields[maxs_key], fields
 
 
+def standardize(vals: torch.Tensor, fields: Optional[dict] = None) -> Tuple[torch.Tensor, dict]:
+    r"""
+    Performs min/max normalization.  Allows specified of \p mins and \p maxs so test set has same
+    normalization as training set.
+    """
+    if fields is None: fields = dict()
+    mean_key, stdev_key = "mean", "stdev"
+    if mean_key not in fields:
+        fields[mean_key] = torch.mean(vals, dim=0)
+    vals -= fields[mean_key]
+
+    if stdev_key not in fields:
+        fields[stdev_key] = torch.std(vals, dim=0)
+    return vals / fields[stdev_key], fields
+
+
 def predict_part_b(train_x, train_y, unlabel_x, base_file_path: str):
     r"""
     Construct the predictions for part B

@@ -9,6 +9,10 @@ where $\alpha_{i} \geq 0$ and $\sum_{i=1}^{n} \alpha_i = 1$. Consider a second s
 Prove that the two sets of points are linearly separable if their convex hulls do not intersect.
 \end{problem}
 
+\begin{lemma}
+  $z$ \& $x$ do not intersect $\Rightarrow$ $z$ and $x$ linearly separable.
+\end{lemma}
+
 \begin{proof}
   \textit{By contradiction}.
 
@@ -32,8 +36,12 @@ Therefore, $x_j = z_k$ which means $x_j\in z$ and $z_k \in x$.  However, this is
 
 In the first part of the problem, we proved that the convex hulls not intersecting implied the two sets are linearly separable.  To conclude ``if and only if,'' we must also prove that linear separability implies the convex hulls do not intersect, which is done below.  This proof's structure and overall argument is similar to the proof above.
 
+\begin{lemma}
+  $z$ and $x$ linearly separable $\Rightarrow$ $z$ \& $x$ do not intersect
+\end{lemma}
+
 \begin{proof}
   \textit{By contradiction}.
 
-  Assume $z$ and $x$ are linearly separable but that $z$ and $x$ \textit{do} intersect, i.e.,~are not disjoint.  Non-disjoint sets cannot be linearly separable because they have points at the same location in space which is a contradiction.
+  Assume $z$ and $x$ are linearly separable but that $z$ and $x$ \textit{do} intersect, i.e.,~are not disjoint.  Non-disjoint sets cannot be linearly separable because they have points at the same location.  Therefore, multiplying by all $w$ and adding all $b$ will result in equivalent values for both $z$ and $x$ making it impossible to meet the requirement of linear separability. This is a contradiction.
 \end{proof}

@@ -24,22 +24,22 @@ Prove that the two sets of points are linearly separable if their convex hulls d
 
   Select the perpendicular bisector of the line between $x_c$ and $z_c$ as the separating hyperplane.  %The norm of the hyperplane is ${w = x_c - z_c}$.  Select $b$ such that the midpoint between $x_c$ and $z_c$ is along the separator.  Therefore:
 
-  \begin{aligncustom}
-    w^{T}x + b &= 0 \\
-    b &= -\left(x_c - z_c\right)^{T}\frac{x_c+z_c}{2}  \\
-    b &= \frac{z_c \cdot z_c - x_c\cdot x_c}{2} = \frac{\norm{z_c}^2 - \norm{x_c}^{2}}{2} \text{.}
-  \end{aligncustom}
+  % \begin{aligncustom}
+  %   w^{T}x + b &= 0 \\
+  %   b &= -\left(x_c - z_c\right)^{T}\frac{x_c+z_c}{2}  \\
+  %   b &= \frac{z_c \cdot z_c - x_c\cdot x_c}{2} = \frac{\norm{z_c}^2 - \norm{x_c}^{2}}{2} \text{.}
+  % \end{aligncustom}
 
 \textit{By contradiction.}  Assume the above is not a separating hyperplane.  That means a point, $z_j\in\mathbf{z}$ is above this hyperplane.  Since $\mathbf{z}$ is convex, all points on the line,~$L$, between $z_c$ and $z_j$ must also be in $\mathbf{z}$.  $L$~is clearly not parallel to the hyperplane (since it crosses it).  This means there is necessarily a point on $L$ that is closer to~$x_c$ (the closest point is perpendicular to $L$ through $x_c$).  This is a contradiction because~$z_c$ and~$x_c$ are the closest pair of points.
 
 The proof for $\mathbf{x}$ being above the separating hyperplane follows similarly.
-
 \end{proof}
 
-\noindent
-\textbf{Continued on next page.}
+% \noindent
+% \textbf{Continued on next page.}
 
-\newpage
+% \newpage
+\noindent
 \begin{subproblem}
   (BONUS\@: Prove that two sets of points are linearly separable if and only if their convex hulls do not intersect.)
 \end{subproblem}

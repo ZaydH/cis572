@@ -13,6 +13,8 @@
 \pgfplotsset{compat=newest}
 \usepgfplotslibrary{fillbetween}    % Allow for highlighting under a curve
 \usepackage{amsmath}                % Allows for piecewise functions using the ``cases'' construct
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
 \usepackage{siunitx}                % Allows for ``S'' alignment in table to align by decimal point
 
 \usepackage{multirow}
@@ -40,6 +42,7 @@
 \DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
 \DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
 \DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
 
 %---------------------------------------------------%
 %     Define Distances Used for Document Margins    %

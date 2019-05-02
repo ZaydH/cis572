@@ -4,44 +4,56 @@ Given a set of data points $x_1,\ldots,x_n$, we can define the convex hull to be
 \[x = \sum_{i=1}^{n} \alpha_i x_i \]
 
 \noindent
-where $\alpha_{i} \geq 0$ and $\sum_{i=1}^{n} \alpha_i = 1$. Consider a second set of points $z_1,\ldots,z_n$ together with their corresponding convex hull. By definition, the two sets of points will be linearly separable if there exists a vector $w$ and a scalar $b$ such that $w^{T}x_i + b > 0$ for all $x_i$ and $w^{T}z_i + b < 0$ for all $z_i$.
+where $\alpha_{i} \geq 0$ and $\sum_{i=1}^{n} \alpha_i = 1$. Consider a second set of points $z_1,\ldots,z_m$ together with their corresponding convex hull. By definition, the two sets of points will be linearly separable if there exists a vector $w$ and a scalar $b$ such that $w^{T}x_i + b > 0$ for all $x_i$ and $w^{T}z_i + b < 0$ for all $z_i$.
 
 Prove that the two sets of points are linearly separable if their convex hulls do not intersect.
 \end{problem}
 
 \begin{lemma}
-  $z$ \& $x$ do not intersect $\Rightarrow$ $z$ and $x$ linearly separable.
+  $\mathbf{z}$ \& $\mathbf{x}$ do not intersect $\Rightarrow$ $\mathbf{z}$ and $\mathbf{x}$ linearly separable.
 \end{lemma}
 
 \begin{proof}
-  \textit{By contradiction}.
 
-  Assume that $z$ and $x$ do not intersect but are \textit{not} linearly separable.  By the definition of a convex hull, the boundaries of the areas enclosed by $x$ and $z$ are continuous polytopes.  If $x$ and $z$ are not linearly separable then for all $w$, including those meeting the definition of $\alpha$, there exists some $x_j \in x$ and $z_k \in z$ such that:
+  Define $\mathbf{x}$ and $\mathbf{z}$ as the convex hulls enumerated above. Define $x_c$ and $z_c$ such that:
 
-  \[w^{T}x_j + b = w^{T}z_k +b \text{.} \]
+  \[ \argmin_{x_c \in \mathbf{x}, z_c \in \mathbf{z}} \norm{x_c - z_c} \text{.} \]
 
-\noindent
-By subtracting $b$, it is clear then that:
+  \noindent
+  This distance is strictly positive since $\mathbf{x}$ and $\mathbf{z}$ are disjoint.
 
-\[w^{T}x_j  = w^{T}z_k \text{.} \]
+  Select the perpendicular bisector of the line between $x_c$ and $z_c$ as the separating hyperplane.  %The norm of the hyperplane is ${w = x_c - z_c}$.  Select $b$ such that the midpoint between $x_c$ and $z_c$ is along the separator.  Therefore:
 
-\noindent
-Therefore, $x_j = z_k$ which means $x_j\in z$ and $z_k \in x$.  However, this is a contradiction since $x$ and $z$ do not intersect, i.e.,~are disjoint.
+  \begin{aligncustom}
+    w^{T}x + b &= 0 \\
+    b &= -\left(x_c - z_c\right)^{T}\frac{x_c+z_c}{2}  \\
+    b &= \frac{z_c \cdot z_c - x_c\cdot x_c}{2} = \frac{\norm{z_c}^2 - \norm{x_c}^{2}}{2} \text{.}
+  \end{aligncustom}
+
+\textit{By contradiction.}  Assume the above is not a separating hyperplane.  That means a point, $z_j\in\mathbf{z}$ is above this hyperplane.  Since $\mathbf{z}$ is convex, all points on the line,~$L$, between $z_c$ and $z_j$ must also be in $\mathbf{z}$.  $L$~is clearly not parallel to the hyperplane (since it crosses it).  This means there is necessarily a point on $L$ that is closer to~$x_c$ (the closest point is perpendicular to $L$ through $x_c$).  This is a contradiction because~$z_c$ and~$x_c$ are the closest pair of points.
+
+The proof for $\mathbf{x}$ being above the separating hyperplane follows similarly.
 
 \end{proof}
 
+\noindent
+\textbf{Continued on next page.}
+
+\newpage
 \begin{subproblem}
   (BONUS\@: Prove that two sets of points are linearly separable if and only if their convex hulls do not intersect.)
 \end{subproblem}
 
-In the first part of the problem, we proved that the convex hulls not intersecting implied the two sets are linearly separable.  To conclude ``if and only if,'' we must also prove that linear separability implies the convex hulls do not intersect, which is done below.  This proof's structure and overall argument is similar to the proof above.
+In the first part of the problem, we proved that the convex hulls not intersecting implied the two sets are linearly separable.  To conclude ``if and only if,'' we must also prove that linear separability implies the convex hulls do not intersect, which is done below.
 
 \begin{lemma}
-  $z$ and $x$ linearly separable $\Rightarrow$ $z$ \& $x$ do not intersect
+  $\mathbf{z}$ and $\mathbf{x}$ linearly separable $\Rightarrow$ $\mathbf{x}$ \& $\mathbf{z}$ do not intersect
 \end{lemma}
 
 \begin{proof}
-  \textit{By contradiction}.
+  \textit{By contradiction}.  Define $\mathbf{x}$ and $\mathbf{z}$ as above.
 
-  Assume $z$ and $x$ are linearly separable but that $z$ and $x$ \textit{do} intersect, i.e.,~are not disjoint.  Non-disjoint sets cannot be linearly separable because they have points at the same location.  Therefore, multiplying by all $w$ and adding all $b$ will result in equivalent values for both $z$ and $x$ making it impossible to meet the requirement of linear separability. This is a contradiction.
+  Assume $\mathbf{x}$ and $\mathbf{z}$ are linearly separable but that $\mathbf{z}$ and $\mathbf{x}$ \textit{do} intersect, i.e.,~are not disjoint. Define $x_{z}$ such that $x_{z}\in\mathbf{x}$ and $x_z\in\mathbf{z}$.
+
+  For the linearly separating hyperplane, $w^{T}x_{z}+b = c$ where $c$ is some constant.  Since $\mathbf{x}$ and $\mathbf{z}$ are linearly separable, $c>0$ and $c<0$ which is a contradiction.
 \end{proof}

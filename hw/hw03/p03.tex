@@ -41,12 +41,12 @@ Since $\phi$ maps $x_i$ onto the standard basis for $\mathbb{R}^2$, i.e.,~elemen
 \[ J = \sum_{i=1}^{m} \sum_{j=1}^{2} \left(w_{j} - y_{i,j}\right)^2 \]
 
 \noindent
-Take the gradient of $J$ and set it to the $\vec{\mathbf{0}}$.
+Take the gradient of $J$ with respect to $w_{i}$ and set it to the $\vec{\mathbf{0}}$.
 
 \[
 \begin{bmatrix}
-  \sum_{i=1}^m 2\lvert w_1 - y_{i,1}\rvert \\
-  \sum_{i=1}^m 2\lvert w_2 - y_{i,2}\rvert
+  \sum_{i=1}^m 2\left( w_1 - y_{i,1}\right) \\
+  \sum_{i=1}^m 2\left( w_2 - y_{i,2}\right)
 \end{bmatrix} =
 \begin{bmatrix}
 0 \\
@@ -55,7 +55,7 @@ Take the gradient of $J$ and set it to the $\vec{\mathbf{0}}$.
 \]
 
 \noindent
-Since all $y_{i,j}$ have the same sign, the absolute values can be dropped.  The problem can be solved to show:
+Via simple algebra, we see:
 
 \begin{aligncustom}
   \begin{bmatrix}
@@ -74,12 +74,12 @@ Since all $y_{i,j}$ have the same sign, the absolute values can be dropped.  The
   \end{pmatrix}^{T}
 \end{aligncustom}
 
-It is trivial to verify this critical point is a minimum and not a negative by trying values on either side.  Likelihood is maximized where MSE is minimized completing this case.
+It is trivial to verify this critical point is a minimum and not a negative by trying values on either side.  Likelihood is maximized where MSE is minimized for linear least squares completing this case.
 
 \noindent
 \textbf{Case~2}: $x=1$
 
-This case is identical to Case~1 except that the signs are positive.  Therefore, the weight vector is:
+This case is identical to Case~1 except that the signs of $y_{i,j}$ are positive.  Therefore, the weight vector is:
 
 \[
   \begin{pmatrix}

@@ -1,0 +1,54 @@
+
+\newcommand{\tikzVec}[4]{\node[vector, rotate=#4, node distance=2cm, #1] (#2) {\rotatebox{-#4}{#3}}}
+\newcommand{\vertVec}[3]{\tikzVec{#1}{#2}{#3}{00}}
+
+\newcommand{\fDec}[1]{g_{#1}}
+\newcommand{\decP}{\fDec{p}}
+\newcommand{\decN}{\fDec{n}}
+
+\begin{tikzpicture}[
+    vector/.style = {%
+      draw,
+      rectangle,
+      drop shadow,
+      fill=white,
+      minimum width=0.1cm,
+      minimum height=2.1cm,
+      font={\scriptsize},
+    },
+    ae trapezoid/.style = {%
+      draw,
+      trapezium,
+      drop shadow,
+      fill=white,
+      trapezium angle=75,
+      minimum width=1.8cm,
+      minimum height=1cm,
+      thick,
+    },
+    net line/.style = {%
+      thick,
+      -latex,
+    },
+  ]
+
+  \vertVec{}{xi}{$\xI{i}$};
+  \node[ae trapezoid, right of=xi, node distance=2.4cm, rotate=-90] (enc) {\rotatebox{90}{$g_{\text{enc}}(\cdot)$}};
+  \draw[net line] (xi) -- (enc);
+  \vertVec{right of=enc, minimum height=0.8cm}{xZ}{$\mathbf{z}^{(i)}$};
+  \draw[net line] (enc) -- (xZ);
+
+  \coordinate[right of=xZ, node distance=2.3cm] (decMid);
+  \node[ae trapezoid, above of=decMid, node distance=1.5cm, rotate=90] (decP) {\rotatebox{-90}{$\decP(\cdot)$}};
+  \vertVec{right of=decP}{xP}{$\xP$};
+  \draw[net line] (decP) -- (xP);
+
+  \node[ae trapezoid, below of=decMid, node distance=1.5cm, rotate=90] (decN) {\rotatebox{-90}{$\decN(\cdot)$}};
+  \vertVec{right of=decN}{xN}{$\xN$};
+  \draw[net line] (decN) -- (xN);
+
+  \coordinate[right of=xZ, node distance=1cm] (xZmid);
+  \draw[net line] (xZ) -- (xZmid);
+  \draw[net line] (xZmid) |- (decP);
+  \draw[net line] (xZmid) |- (decN);
+\end{tikzpicture}

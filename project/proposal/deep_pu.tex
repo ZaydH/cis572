@@ -1,0 +1,166 @@
+\documentclass[10pt]{article}
+
+\usepackage[margin=1in]{geometry}
+
+% Enable (uncolored) cross-reference hyperlinks
+\usepackage[colorlinks=false]{hyperref}
+
+% Imported via UltiSnips
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,decorations.markings,shadows,positioning,calc,backgrounds,shapes}
+
+% Imported via UltiSnips
+\usepackage{amsmath}
+\usepackage{amsfonts}  % Used for \mathbb and \mathcal
+\usepackage{amssymb}
+
+\newcommand{\sign}[1]{\text{sgn}\left( #1 \right) }
+
+% Imported via UltiSnips
+\usepackage{mathtools} % for "\DeclarePairedDelimiter" macro
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+
+% Imported via UltiSnips
+\usepackage[noend]{algpseudocode}
+\usepackage[Algorithm,ruled]{algorithm}
+\algnewcommand\algorithmicforeach{\textbf{for each}}
+\algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
+
+\newcommand{\toolname}{Deep~PU}
+\newcommand{\xI}[1]{\mathbf{x}^{(#1)}}
+\newcommand{\xA}{\xI{i}}
+\newcommand{\xB}{\xI{j}}
+\newcommand{\xPred}[1]{\mathbf{\hat{x}}^{\left(#1\right)}}
+\newcommand{\xP}{\xPred{p}}
+\newcommand{\xN}{\xPred{n}}
+% \newcommand{\nnDist}[3]{\norm*{#1\left(#2\right) - #1\left(#3\right)}}
+\newcommand{\puDist}[2]{\delta\left(#1, #2\right)}
+\newcommand{\nnDist}[3]{\puDist{#1\left(#2\right)}{#1\left(#3\right)}}
+\newcommand{\puDistDiff}{\puDist{\xI{i}}{\xP} - \puDist{\xI{i}}{\xN}}
+
+\newcommand{\lTrip}{\mathcal{L}_{\text{Triplet}}}
+\newcommand{\exA}{\xI{{A}}}
+\newcommand{\exP}{\xI{{P}}}
+\newcommand{\exN}{\xI{{N}}}
+
+\newcommand{\pLoss}{\mathcal{L}_{\text{pos}}}
+\newcommand{\uLoss}{\mathcal{L}_{\text{unlabel}}}
+
+\begin{document}
+\suppressfloats% prevent figure on first page
+\begin{center}
+  \textbf{\Large \textbf{A Deep, Positive-Unlabeled Classifier using Generative Models}}
+  \\\vspace{8pt}
+  {\large CIS572 Project Proposal}
+  \\\vspace{4pt}
+  Zayd Hammoudeh
+\end{center}
+
+\section{Positive-Unlabeled Learning}
+
+Positive-unlabeled (PU) learning is a form of \textit{partially-supervised learning}  where the goal is to construct a binary classifier. The domain's name derives from the training set being partitioned into two disjoint subsets,~$\mathcal{P}$ and~$\mathcal{U}$.  Each example, ${\mathbf{x} \in \mathcal{P}}$, is known \textit{a priori} to be exclusively \textit{positive} labeled. In contrast, all examples in $\mathcal{U}$ are \textit{unlabeled} and may belong to either the positive or negative class. The target task is label $\mathcal{U}$ as accurately as possible.  This paradigm is relevant to domains where there is inavailability or added cost to collect negative labeled data including: land-cover classification~\cite{Li:2011}, protein similarity identification~\cite{Elkan:2008}, disease gene identification~\cite{Yang:2012}, deceptive/incentivized review identification~\cite{Ren:2014}, targeted marketing~\cite{Yi:2017}, and prescription drug interaction analysis~\cite{Liu:2017}.
+
+State-of-the-art PU learning algorithms generally rely on a cost-sensitive learning framework where each unlabeled example is simultaneously treated as both positive \textit{and} negative valued with different class weights proportional to that example's label confidence.~\cite{Elkan:2008}  We are not aware of any PU learning algorithm that is leverages the unique advantages of deep learning.  This project presents a new PU learning algorithm based on a deep bifurcated autoencoder.  The remainder of this document is structured as follows.  Section~\ref{sec:Siamese} introduces the Siamese Network, from which our architecture was inspired.  Section~\ref{sec:DeepPU} provides an overview of our novel architecture.
+
+\section{Siamese Network}\label{sec:Siamese}
+
+  A Siamese neural network is generally used to determine if two input examples $\xA$ and~$\xB$ have the same label.  The network, $f: \mathcal{D}(\mathbf{x}) \rightarrow \mathbb{R}^{m}$, is simply a function that maps a training example,~$\mathbf{x}$, to an $m$-dimensional space, where $m$~is a positive-integer hyperparameter. For distance metric,~$\delta:\mathbb{R}^{m} \rightarrow \mathbb{R}_{{\geq}0}$, the basic intuition underpinning Siamese networks is that:
+
+  \begin{itemize}
+    \item If examples,~$\xA$ and~$\xB$ have the same label, $\nnDist{f}{\xA}{\xB}$ is \textbf{small}
+    \item Otherwise, $\nnDist{f}{\xA}{\xB}$ is \textbf{large}
+  \end{itemize}
+
+  \noindent
+  Since $\delta$ is a distance metric, it satisfies the properties of non-negativity, identity, symmetry, and the triangle inequality.
+
+  Perhaps the most well known application of Siamese Networks is facial recognition.  The goal is to identify whether some observed person,~$\xI{i}$, matches any individuals from a database of persons of interest (e.g.,~wanted criminals, employees, etc.).  $\xI{i}$ is paired with its closest (precomputed) match,~$\xI{j}$.  If $\nnDist{f}{\xI{i}}{\xI{j}}$ exceeds some predefined threshold, the network reports that no match was found.
+
+\subsection{Triplet Loss}\label{sec:TripletLoss}
+
+  Siamese networks are trained by minimizing the triplet, or contrastive loss.  The function's name derives the three training examples required for a single loss calculation. First, $\exA$ is the baseline, or \textit{anchor}, example used as the reference for comparison.  \textit{Positive} example,~$\exP$, must have the same label $\exA$ while \textit{negative} example $\exN$ must have a different label than $\exA$ (and in turn $\exP$).
+
+  The triplet loss,~$\lTrip$, is defined in Eq.~\eqref{eq:TripletLoss}. The loss is minimized when a Siamese network follows the basic intuition outlined previously; the relative definition of ``large'' and ``small'' is based on positive-valued hyperparameter,~$\alpha$.
+
+  \begin{equation}\label{eq:TripletLoss}
+    \lTrip = \max\left\{ \nnDist{f}{\exA}{\exP} - \nnDist{f}{\exA}{\exN} + \alpha, 0 \right\}
+  \end{equation}
+
+\section{A New Positive-Unlabeled Learner}\label{sec:DeepPU}
+
+One of the challenges of combining deep and positive unlabeled learning is constructing a loss function that is able to differentiate positive and negative examples in the unlabeled set.  Generative models like autoencoders have inherent, well-studied loss functions associated with them.  Although not generally common practice, these loss functions can be adapted for classification.
+
+Shown in Figure~\ref{fig:DeepPU}, our positive-unlabeled learner,~\toolname, relies on a novel bifurcated autoencoder, which consists of a single encoder,~$g_{enc}$, whose output is shared between two decoders.   Each decoder,~$g_{p}$ and $g_{n}$ are tuned to reconstruct only a single class, i.e.,~the positive or negative class respectively.
+
+Figure~\ref{fig:DeepPU} shows the entire latent vector,~$\mathbf{z}$, being input into both decoders.  However, we theorize that the architecture may get better performance if parts of the latent representation are only provided to one of the decoders.
+
+\begin{figure}[t]
+  \centering
+  \input{tikz/deep_pu.tex}
+  \caption{Deep positive-unlabeled learner architecture}\label{fig:DeepPU}
+\end{figure}
+
+\subsection{Training}
+
+What follows is a very brief description of our planned training algorithm.  It is divided into three phases:
+
+\vspace{6pt}
+\noindent
+\textbf{Step~\#1} \textit{Encoder \& Negative Decoder Pretraining}: Using the unlabeled set~$\mathcal{U}$, train $g_{enc}$ and $g_{n}$ similar to a standard autoencoder.  The loss will be the reconstruction error between the original input,~$\mathbf{x}$, and the reconstructed output,~$\hat{\mathbf{x}}$.  The specific loss function used may be mean-squared error or a form of logistic loss.
+
+\subsection{Loss Functions}
+
+\begin{algorithm}[t]
+  \caption{Joint training of the positive and unlabeled decoders}\label{alg:}
+  \begin{algorithmic}[1]
+    \State $\mathcal{P}$: Positive Set
+    \State $\mathcal{U}$: Unlabeled Set
+    \State $\alpha\gets 0$
+    \While{\text{not converged}}
+      \State Increment value of $\alpha$
+      \While{\text{epoch not complete}}
+        \State Select batch $b_{\mathcal{P}}$ from $\mathcal{P}$
+        \State Update $\theta$ via $\nabla\pLoss(b_{\mathcal{P}})$
+        \State Select batch $b_{\mathcal{U}}$ from $\mathcal{P}$
+        \State Update $\theta$ via $\nabla\uLoss(b_{\mathcal{U}})$
+      \EndWhile
+    \EndWhile
+  \end{algorithmic}
+\end{algorithm}
+
+The loss functions used by \toolname\ are inspired by the triplet loss function described in Section~\ref{sec:TripletLoss}.  Ho
+
+  \begin{equation}\label{eq:PU:PosLoss}
+    \pLoss = \max\left\{ \puDistDiff + \alpha, 0 \right\}
+  \end{equation}
+
+  \begin{equation}\label{eq:PU:UnlabelLoss}
+    \uLoss = \max\left\{ - \abs*{\puDistDiff} + \alpha, 0 \right\}
+  \end{equation}
+
+\subsection{Prediction Function}
+
+Function~$g_{p}$ is specifically trained to reconstruct the latent representation of positive-valued examples.  In contrast, function~$g_{n}$ is penalized during training to facilitate it poorly reconstructing these same positive-valued examples.  Therefore, if, for unlabeled example~$\xI{i}$, $g_{p}$ yields a superior reconstruction than $g_{n}$, it can be reasonably concluded that $\xI{i}$ is positive labeled; otherwise, it can be concluded that $\xI{i}$ is negative labeled.  This intuition is the basis for \toolname's prediction function shown in Eq.~\eqref{eq:PU:ClassificationFunc}.
+
+  \begin{equation}\label{eq:PU:ClassificationFunc}
+    \hat{y}^{\left( i \right)} = -\sign{\puDistDiff}
+  \end{equation}
+
+  In the case where $\puDist{\xI{i}}{\xP}$ equals $\puDist{\xI{i}}{\xN}$, $\xI{i}$ is equally likely to be either negative or positive valued.  For simplicity, such examples are assigned a positive label. %\toolname\ can be converted to a \textit{well-calibrated} classifier through established techniques such as isotonic regression or Platt scaling.
+
+  The accuracy of discriminative predictors may be closely tied to the prediction threshold used.  As such, we plan to also use area-under-the-curve to make the quantification of our network's performance less vulnerable to this prediction threshold.
+
+\section{Planned Experiments}
+
+Our experiments will be primarily computer vision focused  Graphical representations will allow us to perform quick analysis as we tune our algorithm's performance.  In addition, the images we will generate should make the final project presentation more engaging for the audience, in particular since most of the class is not very experienced with machine learning.
+
+Similar to previous work~\cite{Ghasemi:2016,duPlessis:2014,Claesen:2015}, \toolname\ will be tested on a handwritten digit dataset, specifically MNIST~\cite{LeCun:1999}.  The baseline for comparison will be previously published results as well as our implementation of Elkan \& Noto's algorithm~\cite{Elkan:2008}.  The comparison metrics will be accuracy as well as are under the precision-recall and/or receiver operating characteristics curves.
+
+If time allows, experiments will also be performed on the USPS digit and fashion-MNIST  datasets~\cite{FashionMNIST}.
+
+\bibliographystyle{ieeetr}
+\bibliography{bib/ref.bib}
+\end{document}

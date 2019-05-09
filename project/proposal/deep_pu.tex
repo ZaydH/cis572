@@ -61,9 +61,9 @@
 
 \section{Positive-Unlabeled Learning}
 
-Positive-unlabeled (PU) learning is a form of \textit{partially-supervised learning}  where the goal is to construct a binary classifier. The domain's name derives from the training set being partitioned into two disjoint subsets,~$\mathcal{P}$ and~$\mathcal{U}$.  Each example, ${\mathbf{x} \in \mathcal{P}}$, is known \textit{a priori} to be exclusively \textit{positive} labeled. In contrast, all examples in $\mathcal{U}$ are \textit{unlabeled} and may belong to either the positive or negative class. The target task is label $\mathcal{U}$ as accurately as possible.  This paradigm is relevant to domains where there is inavailability or added cost to collect negative labeled data including: land-cover classification~\cite{Li:2011}, protein similarity identification~\cite{Elkan:2008}, disease gene identification~\cite{Yang:2012}, deceptive/incentivized review identification~\cite{Ren:2014}, targeted marketing~\cite{Yi:2017}, and prescription drug interaction analysis~\cite{Liu:2017}.
+Positive-unlabeled (PU) learning is a form of \textit{partially-supervised learning}  where the goal is to construct a binary classifier. Its name derives from the training set being partitioned into two disjoint subsets,~$\mathcal{P}$ and~$\mathcal{U}$.  Each example, ${\mathbf{x} \in \mathcal{P}}$, is known \textit{a priori} to be exclusively \textit{positive} labeled. In contrast, all examples in $\mathcal{U}$ are \textit{unlabeled} and may belong to either the positive or negative class. The objective is to label~$\mathcal{U}$ as accurately as possible (i.e.,~\textit{transductive} setting) as well as potentially an unseen test set (\textit{inductive} setting).  This paradigm is relevant to domains where there is unavailability of or added cost to collect negative labeled data including: land-cover classification~\cite{Li:2011}, protein similarity prediction~\cite{Elkan:2008}, disease gene identification~\cite{Yang:2012}, deceptive/incentivized review identification~\cite{Ren:2014}, targeted marketing~\cite{Yi:2017}, and prescription drug interaction analysis~\cite{Liu:2017}.
 
-State-of-the-art PU learning algorithms generally rely on a cost-sensitive learning framework where each unlabeled example is simultaneously treated as both positive \textit{and} negative valued with different class weights proportional to that example's label confidence.~\cite{Elkan:2008}  We are not aware of any PU learning algorithm that is leverages the unique advantages of deep learning.  This project presents a new PU learning algorithm based on a deep bifurcated autoencoder.  The remainder of this document is structured as follows.  Section~\ref{sec:Siamese} introduces the Siamese Network, from which our architecture was inspired.  Section~\ref{sec:DeepPU} provides an overview of our novel architecture.
+State-of-the-art PU learning algorithms generally rely on a cost-sensitive learning framework where each unlabeled example is simultaneously treated as both positive \textit{and} negative valued with different class weights proportional to that example's label confidence.~\cite{Elkan:2008}  This primary contribution of this project is \toolname, a new PU learning algorithm based on a deep bifurcated autoencoder.  We are not aware of any previous PU learning algorithm that leverages the unique advantages of deep learning.    The remainder of this document is structured as follows.  Section~\ref{sec:Siamese} introduces the Siamese neural network, from which our architecture was inspired.  Section~\ref{sec:DeepPU} provides an overview of our novel architecture.  Section~\ref{sec:Experiments} concludes with a discussion of the planned experiments.
 
 \section{Siamese Network}\label{sec:Siamese}
 
@@ -81,7 +81,7 @@ State-of-the-art PU learning algorithms generally rely on a cost-sensitive learn
 
 \subsection{Triplet Loss}\label{sec:TripletLoss}
 
-  Siamese networks are trained by minimizing the triplet, or contrastive loss.  The function's name derives the three training examples required for a single loss calculation. First, $\exA$ is the baseline, or \textit{anchor}, example used as the reference for comparison.  \textit{Positive} example,~$\exP$, must have the same label $\exA$ while \textit{negative} example $\exN$ must have a different label than $\exA$ (and in turn $\exP$).
+  Siamese networks are trained by minimizing the triplet, or contrastive loss.  The function's name derives from the three training examples required for a single loss calculation. First, $\exA$ is the baseline, or \textit{anchor}, example used as the reference for comparison.  \textit{Positive} example,~$\exP$, must have the same label $\exA$ while \textit{negative} example $\exN$ must have a different label than $\exA$ (and in turn $\exP$).
 
   The triplet loss,~$\lTrip$, is defined in Eq.~\eqref{eq:TripletLoss}. The loss is minimized when a Siamese network follows the basic intuition outlined previously; the relative definition of ``large'' and ``small'' is based on positive-valued hyperparameter,~$\alpha$.
 
@@ -91,11 +91,11 @@ State-of-the-art PU learning algorithms generally rely on a cost-sensitive learn
 
 \section{A New Positive-Unlabeled Learner}\label{sec:DeepPU}
 
-One of the challenges of combining deep and positive unlabeled learning is constructing a loss function that is able to differentiate positive and negative examples in the unlabeled set.  Generative models like autoencoders have inherent, well-studied loss functions associated with them.  Although not generally common practice, these loss functions can be adapted for classification.
+One of the challenges of combining deep and positive unlabeled learning is constructing a loss function that performs well when there is only one labeled class.  Generative models, e.g.,~autoencoders, are associated with well-studied objective/loss functions.  Although not generally common practice, these loss functions can be adapted for classification.
 
-Shown in Figure~\ref{fig:DeepPU}, our positive-unlabeled learner,~\toolname, relies on a novel bifurcated autoencoder, which consists of a single encoder,~$g_{enc}$, whose output is shared between two decoders.   Each decoder,~$g_{p}$ and $g_{n}$ are tuned to reconstruct only a single class, i.e.,~the positive or negative class respectively.
+Shown in Figure~\ref{fig:DeepPU}, our positive-unlabeled learner,~\textit{\toolname}, relies on a novel bifurcated autoencoder, which consists of a single encoder,~$g_{enc}$, whose output is shared between two decoders,~$g_{p}$ and~$g_{n}$, that are tuned to reconstruct only a single class, i.e.,~positive or negative respectively.  Note that the encoder and decoders can be feed-forward or convolutional based on the application.
 
-Figure~\ref{fig:DeepPU} shows the whole latent vector,~$\mathbf{z}$, being input into both decoders.  However, we theorize that the architecture may get better performance if parts of the latent representation are only provided to one of the decoders.
+Figure~\ref{fig:DeepPU} shows the entire latent vector,~$\mathbf{z}$, being input into the two decoders.  However, we theorize that the architecture may get better performance if instead only disjoint slices of the latent representation are provided to each decoder.  This is an open area of study for the project.
 
 \begin{figure}[t]
   \centering
@@ -105,35 +105,30 @@ Figure~\ref{fig:DeepPU} shows the whole latent vector,~$\mathbf{z}$, being input
 
 \subsection{Training}
 
-What follows is a very brief description of our planned training algorithm.  It is divided into three phases:
+The current algorithm for training \toolname\ consists of three disjoint, sequential steps.  A highly summarized version of the training procedure is described below.
 
-\vspace{6pt}
-\noindent
-\textbf{Step~\#1} \textit{Encoder \& Negative Decoder Pretraining}: Using only the unlabeled set~$\mathcal{U}$, train $g_{enc}$ and $g_{n}$ similar to a standard autoencoder.  Hence, unlabeled examples are input into the encoder and their reconstructed representation output by the decoder.  Note that the positive decoder is completely unused during this step.
+\paragraph{Step~\#1} \textit{Encoder \& Negative Decoder Pretraining}: Using only the unlabeled set~$\mathcal{U}$, train $g_{enc}$ and $g_{n}$ similar to a standard autoencoder.  Hence, unlabeled examples are input into the encoder and their reconstructed representation output by the decoder.  Note that the positive decoder is completely idle during this step.
 
-The training objective is to minimize the reconstruction error between the original input,~$\mathbf{x}$, and the reconstructed output,~$\hat{\mathbf{x}}$. This error can be quantified using standard loss functions including mean-squared error and in some cases a specialized form of logistic loss.
+The training objective is to minimize the reconstruction error between unlabeled input,~$\xI{i}$, and its reconstructed output,~$\xPred{i}$. This error can be quantified using standard loss functions including mean-squared error and in some cases a specialized form of logistic loss.
 
-\vspace{6pt}
-\noindent
-\textbf{Step~\#2} \textit{Positive Decoder Pretraining}: The encoder and positive decoder,~$g_p$, are treated as a standard auotencoder and the positive, labeled examples are used for training.  The negative decoder is unused.  Unlike in Step~\#1, the weights in the encoder are frozen for this step.  This places on a slight restriction on the performance because the encoder can represent both positive and negative examples since it was trained on the (mixed) unlabeled set.  The objective remains reducing the reconstruction error.
+\paragraph{Step~\#2} \textit{Positive Decoder Pretraining}: The encoder and positive decoder,~$g_p$, are treated as a standard autoencoder and the positive, labeled examples are the training set.  The negative decoder is unused.  In contrast to Step~\#1, the encoder's weights are frozen during this step.  This creates only a very small performance restriction because the encoder can represent both positive and negative examples since it was trained on (mixed) unlabeled set,~$\mathcal{U}$.  The training objective remains minimizing the reconstruction error.
 
-\vspace{6pt}
-\noindent
-\textbf{Step~\#3} \textit{Contrastive Loss Training}: Our primary novel contributions are in this step.  Algorithm~\ref{alg:JointTraining} details our training procedure while out new loss functions are in Eq.~\eqref{eq:PU:PosLoss} and~\ref{eq:PU:UnlabelLoss}.  These contributions will be described in much greater detail in our final report and presentation.
+\paragraph{Step~\#3} \textit{Contrastive Loss Training}: Our novel contributions are most pronounced in this step.  Algorithm~\ref{alg:JointTraining} details our training procedure while our loss functions are in Eq.~\eqref{eq:PU:PosLoss} and~\ref{eq:PU:UnlabelLoss}.  Their structure is similar to the contrastive properties of triplet loss, which was described in Section~\ref{sec:TripletLoss}.  These contributions will be described in much greater detail in our final report and presentation.
 
 \begin{algorithm}[t]
   \caption{Joint training of the positive and unlabeled decoders}\label{alg:JointTraining}
   \begin{algorithmic}[1]
     \State $\mathcal{P}$: Positive Set
     \State $\mathcal{U}$: Unlabeled Set
+    \State Unfreeze all weights
     \State $\alpha\gets 0$
     \While{\text{not converged}}
-      \State Increment value of $\alpha$
+      \State Increment value of $\alpha$ \Comment{Increasing temperature parameter}
       \While{\text{epoch not complete}}
         \State Select batch $b_{\mathcal{P}}$ from $\mathcal{P}$
-        \State Update $\theta$ via $\nabla\pLoss(b_{\mathcal{P}})$
+        \State Update $\vec{\theta}$ via $\nabla\pLoss(b_{\mathcal{P}})$
         \State Select batch $b_{\mathcal{U}}$ from $\mathcal{P}$
-        \State Update $\theta$ via $\nabla\uLoss(b_{\mathcal{U}})$
+        \State Update $\vec{\theta}$ via $\nabla\uLoss(b_{\mathcal{U}})$
       \EndWhile
     \EndWhile
   \end{algorithmic}
@@ -155,17 +150,18 @@ Function~$g_{p}$ is specifically trained to reconstruct the latent representatio
     \hat{y}^{\left( i \right)} = -\sign{\puDistDiff}
   \end{equation}
 
-  In the case where $\puDist{\xI{i}}{\xP}$ equals $\puDist{\xI{i}}{\xN}$, $\xI{i}$ is equally likely to be either negative or positive valued.  For simplicity, such examples are assigned a positive label. %\toolname\ can be converted to a \textit{well-calibrated} classifier through established techniques such as isotonic regression or Platt scaling.
+\noindent
+In the case where $\puDist{\xI{i}}{\xP}$ equals $\puDist{\xI{i}}{\xN}$, $\xI{i}$ is equally likely to be either negative or positive valued.  For simplicity, such examples are assigned a positive label. %\toolname\ can be converted to a \textit{well-calibrated} classifier through established techniques such as isotonic regression or Platt scaling.
 
-  The accuracy of discriminative predictors may be closely tied to the prediction threshold used.  As such, we plan to also use area-under-the-curve to make the quantification of our network's performance less vulnerable to this prediction threshold.
+  The accuracy of discriminative predictors may be closely tied to the prediction threshold used.  As such, we plan to also use area-under-the-curve metric to make the quantification of network's performance more robust.
 
-\section{Planned Experiments}
+\section{Planned Experiments}\label{sec:Experiments}
 
 Our experiments will be primarily computer vision focused. Graphical training data will enable us to quick analyze and tune our algorithm's performance.  In addition, the images we will generate should make the final project presentation more engaging for the audience, in particular since most of the class is not very experienced with machine learning.
 
 Similar to previous work~\cite{Ghasemi:2016,duPlessis:2014,Claesen:2015}, \toolname\ will be tested on a handwritten digit dataset, specifically MNIST~\cite{LeCun:1999}.  The baseline for comparison will be previously published results as well as our implementation of Elkan \& Noto's algorithm~\cite{Elkan:2008}.  The comparison metrics will be accuracy as well as area under the precision-recall and/or receiver operating characteristic curves as previously explained.
 
-If time allows, experiments will also be performed on the USPS digit and fashion-MNIST  datasets~\cite{FashionMNIST}.
+If time allows, experiments will also be performed on the USPS digit and fashion-MNIST datasets~\cite{FashionMNIST}.
 
 \bibliographystyle{ieeetr}
 \bibliography{bib/ref.bib}

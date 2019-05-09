@@ -14,7 +14,7 @@
 \usepackage{amsfonts}  % Used for \mathbb and \mathcal
 \usepackage{amssymb}
 
-\newcommand{\sign}[1]{\text{sgn}\left( #1 \right) }
+\newcommand{\sign}[1]{\text{sgn}\bigg( #1 \bigg) }
 
 % Imported via UltiSnips
 \usepackage{mathtools} % for "\DeclarePairedDelimiter" macro
@@ -29,7 +29,7 @@
 \algnewcommand\algorithmicforeach{\textbf{for each}}
 \algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
 
-\newcommand{\toolname}{Deep~PU}
+\newcommand{\toolname}{Deep-PU}
 \newcommand{\xI}[1]{\mathbf{x}^{(#1)}}
 \newcommand{\xA}{\xI{i}}
 \newcommand{\xB}{\xI{j}}
@@ -95,12 +95,12 @@ One of the challenges of combining deep and positive unlabeled learning is const
 
 Shown in Figure~\ref{fig:DeepPU}, our positive-unlabeled learner,~\toolname, relies on a novel bifurcated autoencoder, which consists of a single encoder,~$g_{enc}$, whose output is shared between two decoders.   Each decoder,~$g_{p}$ and $g_{n}$ are tuned to reconstruct only a single class, i.e.,~the positive or negative class respectively.
 
-Figure~\ref{fig:DeepPU} shows the entire latent vector,~$\mathbf{z}$, being input into both decoders.  However, we theorize that the architecture may get better performance if parts of the latent representation are only provided to one of the decoders.
+Figure~\ref{fig:DeepPU} shows the whole latent vector,~$\mathbf{z}$, being input into both decoders.  However, we theorize that the architecture may get better performance if parts of the latent representation are only provided to one of the decoders.
 
 \begin{figure}[t]
   \centering
   \input{tikz/deep_pu.tex}
-  \caption{Deep positive-unlabeled learner architecture}\label{fig:DeepPU}
+  \caption{\toolname\ learner architecture}\label{fig:DeepPU}
 \end{figure}
 
 \subsection{Training}
@@ -109,12 +109,20 @@ What follows is a very brief description of our planned training algorithm.  It 
 
 \vspace{6pt}
 \noindent
-\textbf{Step~\#1} \textit{Encoder \& Negative Decoder Pretraining}: Using the unlabeled set~$\mathcal{U}$, train $g_{enc}$ and $g_{n}$ similar to a standard autoencoder.  The loss will be the reconstruction error between the original input,~$\mathbf{x}$, and the reconstructed output,~$\hat{\mathbf{x}}$.  The specific loss function used may be mean-squared error or a form of logistic loss.
+\textbf{Step~\#1} \textit{Encoder \& Negative Decoder Pretraining}: Using only the unlabeled set~$\mathcal{U}$, train $g_{enc}$ and $g_{n}$ similar to a standard autoencoder.  Hence, unlabeled examples are input into the encoder and their reconstructed representation output by the decoder.  Note that the positive decoder is completely unused during this step.
 
-\subsection{Loss Functions}
+The training objective is to minimize the reconstruction error between the original input,~$\mathbf{x}$, and the reconstructed output,~$\hat{\mathbf{x}}$. This error can be quantified using standard loss functions including mean-squared error and in some cases a specialized form of logistic loss.
+
+\vspace{6pt}
+\noindent
+\textbf{Step~\#2} \textit{Positive Decoder Pretraining}: The encoder and positive decoder,~$g_p$, are treated as a standard auotencoder and the positive, labeled examples are used for training.  The negative decoder is unused.  Unlike in Step~\#1, the weights in the encoder are frozen for this step.  This places on a slight restriction on the performance because the encoder can represent both positive and negative examples since it was trained on the (mixed) unlabeled set.  The objective remains reducing the reconstruction error.
+
+\vspace{6pt}
+\noindent
+\textbf{Step~\#3} \textit{Contrastive Loss Training}: Our primary novel contributions are in this step.  Algorithm~\ref{alg:JointTraining} details our training procedure while out new loss functions are in Eq.~\eqref{eq:PU:PosLoss} and~\ref{eq:PU:UnlabelLoss}.  These contributions will be described in much greater detail in our final report and presentation.
 
 \begin{algorithm}[t]
-  \caption{Joint training of the positive and unlabeled decoders}\label{alg:}
+  \caption{Joint training of the positive and unlabeled decoders}\label{alg:JointTraining}
   \begin{algorithmic}[1]
     \State $\mathcal{P}$: Positive Set
     \State $\mathcal{U}$: Unlabeled Set
@@ -130,8 +138,6 @@ What follows is a very brief description of our planned training algorithm.  It 
     \EndWhile
   \end{algorithmic}
 \end{algorithm}
-
-The loss functions used by \toolname\ are inspired by the triplet loss function described in Section~\ref{sec:TripletLoss}.  Ho
 
   \begin{equation}\label{eq:PU:PosLoss}
     \pLoss = \max\left\{ \puDistDiff + \alpha, 0 \right\}
@@ -155,9 +161,9 @@ Function~$g_{p}$ is specifically trained to reconstruct the latent representatio
 
 \section{Planned Experiments}
 
-Our experiments will be primarily computer vision focused  Graphical representations will allow us to perform quick analysis as we tune our algorithm's performance.  In addition, the images we will generate should make the final project presentation more engaging for the audience, in particular since most of the class is not very experienced with machine learning.
+Our experiments will be primarily computer vision focused. Graphical training data will enable us to quick analyze and tune our algorithm's performance.  In addition, the images we will generate should make the final project presentation more engaging for the audience, in particular since most of the class is not very experienced with machine learning.
 
-Similar to previous work~\cite{Ghasemi:2016,duPlessis:2014,Claesen:2015}, \toolname\ will be tested on a handwritten digit dataset, specifically MNIST~\cite{LeCun:1999}.  The baseline for comparison will be previously published results as well as our implementation of Elkan \& Noto's algorithm~\cite{Elkan:2008}.  The comparison metrics will be accuracy as well as are under the precision-recall and/or receiver operating characteristics curves.
+Similar to previous work~\cite{Ghasemi:2016,duPlessis:2014,Claesen:2015}, \toolname\ will be tested on a handwritten digit dataset, specifically MNIST~\cite{LeCun:1999}.  The baseline for comparison will be previously published results as well as our implementation of Elkan \& Noto's algorithm~\cite{Elkan:2008}.  The comparison metrics will be accuracy as well as area under the precision-recall and/or receiver operating characteristic curves as previously explained.
 
 If time allows, experiments will also be performed on the USPS digit and fashion-MNIST  datasets~\cite{FashionMNIST}.
 

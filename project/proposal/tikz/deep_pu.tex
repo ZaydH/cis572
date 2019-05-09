@@ -33,17 +33,17 @@
   ]
 
   \vertVec{}{xi}{$\xI{i}$};
-  \node[ae trapezoid, right of=xi, node distance=2.4cm, rotate=-90] (enc) {\rotatebox{90}{$g_{\text{enc}}(\cdot)$}};
+  \node[ae trapezoid, right of=xi, node distance=2.4cm, rotate=-90] (enc) {\rotatebox{90}{$g_{\text{enc}}(\cdot;\theta_{e})$}};
   \draw[net line] (xi) -- (enc);
   \vertVec{right of=enc, minimum height=0.8cm}{xZ}{$\mathbf{z}^{(i)}$};
   \draw[net line] (enc) -- (xZ);
 
   \coordinate[right of=xZ, node distance=2.3cm] (decMid);
-  \node[ae trapezoid, above of=decMid, node distance=1.5cm, rotate=90] (decP) {\rotatebox{-90}{$\decP(\cdot)$}};
+  \node[ae trapezoid, above of=decMid, node distance=1.5cm, rotate=90] (decP) {\rotatebox{-90}{$\decP(\cdot;\theta_{p})$}};
   \vertVec{right of=decP}{xP}{$\xP$};
   \draw[net line] (decP) -- (xP);
 
-  \node[ae trapezoid, below of=decMid, node distance=1.5cm, rotate=90] (decN) {\rotatebox{-90}{$\decN(\cdot)$}};
+  \node[ae trapezoid, below of=decMid, node distance=1.5cm, rotate=90] (decN) {\rotatebox{-90}{$\decN(\cdot;\theta_{n})$}};
   \vertVec{right of=decN}{xN}{$\xN$};
   \draw[net line] (decN) -- (xN);
 

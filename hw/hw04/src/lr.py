@@ -9,9 +9,7 @@
 #
 import sys
 import re
-from math import log
 from math import exp
-from math import sqrt
 
 MAX_ITERS = 100
 
@@ -30,7 +28,7 @@ def sigmoid(x):
     try:
         return 1. / (1. + exp(-x))
     except OverflowError:
-        return 1.
+        return 0.
 
 
 # Load data from a file
@@ -60,13 +58,19 @@ def train_lr(data, eta, l2_reg_weight):
     #
     for _ in range(MAX_ITERS):
         num_wrong = 0
+        w_update = [0] * len(data[0][0])
+        b_update = 0
         for (x, y) in data:
+            if y * (predict_lr((w, b), x) - 0.5) <= 0:
+                num_wrong += 1
             g_base = y * sigmoid(-y * (dot(w, x) + b))
-            w_t = add(w, x, eta * g_base)
-            w_t = add(w_t, w, -eta * l2_reg_weight)
-            w, b = w_t, b + g_base
+            w_update = add(w_update, x, eta * g_base)
+            b_update += g_base
         if num_wrong == 0:
             break
+        w = add(w, w, -eta * l2_reg_weight)
+        w = add(w, w_update, 1)
+        b += b_update
     return w, b
 
 

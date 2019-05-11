@@ -64,13 +64,13 @@ def train_lr(data, eta, l2_reg_weight):
             if y * (predict_lr((w, b), x) - 0.5) <= 0:
                 num_wrong += 1
             g_base = y * sigmoid(-y * (dot(w, x) + b))
-            w_update = add(w_update, x, eta * g_base)
+            w_update = add(w_update, x, g_base)
             b_update += g_base
         if num_wrong == 0:
             break
-        w = add(w, w, -eta * l2_reg_weight)
-        w = add(w, w_update, 1)
-        b += b_update
+        w = add(w, w, -2 * eta * l2_reg_weight)
+        w = add(w, w_update, eta)
+        b += eta * (b_update - 2 * l2_reg_weight * b)
     return w, b
 
 

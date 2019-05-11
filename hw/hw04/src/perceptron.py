@@ -9,8 +9,6 @@
 #
 import sys
 import re
-from math import log
-from math import exp
 
 MAX_ITERS = 100
 
@@ -52,17 +50,15 @@ def train_perceptron(data):
     #
     # YOUR CODE HERE!
     #
-    for _ in range(100):
+    for _ in range(MAX_ITERS):
         num_wrong = 0
         for (x, y) in data:
             pred = predict_perceptron((w, b), x)
             if pred * y > 0:
-                sign = 1.
-            else:
-                sign = -1.
-                num_wrong += 1
-            w = add(w, x, sign)
-            b += sign
+                continue
+            num_wrong += 1
+            w = add(w, x, y)
+            b += y
         if num_wrong == 0:
             break
     return w, b

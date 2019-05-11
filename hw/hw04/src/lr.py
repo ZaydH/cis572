@@ -16,6 +16,23 @@ from math import sqrt
 MAX_ITERS = 100
 
 
+def dot(a, b):
+    r""" Perform dot product operation between vectors a and b """
+    return sum(a_i * b_i for (a_i, b_i) in zip(a, b))
+
+
+def add(a, b, sign):
+    r""" Perform element-wise addition in form a_i + sign * b_i """
+    return [a_i + sign * b_i for (a_i, b_i) in zip(a, b)]
+
+
+def sigmoid(x):
+    try:
+        return 1. / (1. + exp(-x))
+    except OverflowError:
+        return 1.
+
+
 # Load data from a file
 def read_data(filename):
     f = open(filename, 'r')
@@ -23,13 +40,13 @@ def read_data(filename):
     data = []
     header = f.readline().strip()
     varnames = p.split(header)
-    namehash = {}
+    # namehash = {}
     for l in f:
         example = [int(x) for x in p.split(l.strip())]
         x = example[0:-1]
         y = example[-1]
         data.append((x, y))
-    return (data, varnames)
+    return data, varnames
 
 
 # Train a logistic regression model using batch gradient descent
@@ -41,8 +58,16 @@ def train_lr(data, eta, l2_reg_weight):
     #
     # YOUR CODE HERE
     #
-
-    return (w, b)
+    for _ in range(MAX_ITERS):
+        num_wrong = 0
+        for (x, y) in data:
+            g_base = y * sigmoid(-y * (dot(w, x) + b))
+            w_t = add(w, x, eta * g_base)
+            w_t = add(w_t, w, -eta * l2_reg_weight)
+            w, b = w_t, b + g_base
+        if num_wrong == 0:
+            break
+    return w, b
 
 
 # Predict the probability of the positive label (y=+1) given the
@@ -53,13 +78,13 @@ def predict_lr(model, x):
     #
     # YOUR CODE HERE
     #
-
-    return 0.5
+    y = dot(w, x) + b
+    return sigmoid(y)
 
 
 # Load train and test data.  Learn model.  Report accuracy.
 def main(argv):
-    if (len(argv) != 5):
+    if len(argv) != 5:
         print('Usage: lr.py <train> <test> <eta> <lambda> <model>')
         sys.exit(2)
     (train, varnames) = read_data(argv[0])

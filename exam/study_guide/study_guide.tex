@@ -1,0 +1,176 @@
+\documentclass[10pt]{article}
+
+\usepackage[margin=0.1in]{geometry}
+
+% Enable (uncolored) cross-reference hyperlinks
+\usepackage[colorlinks=false]{hyperref}
+
+\usepackage{multicol}
+
+\usepackage{titlesec}  % Used to adjust title heading
+% Format:  \titlespacing{command}{left spacing}{before spacing}{after spacing}[right]
+\titlespacing\subsection*{0pt}{6pt plus 4pt minus 0pt}{4pt plus 2pt minus 0pt}
+
+% Imported via UltiSnips
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\usepackage{amsfonts}  % Used for \mathbb and \mathcal
+\usepackage{amssymb}
+
+% Imported via UltiSnips
+\usepackage{mathtools} % for "\DeclarePairedDelimiter" macro
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+
+% Imported via UltiSnips
+\usepackage[noend]{algpseudocode}
+\usepackage[Algorithm,ruled]{algorithm}
+\algnewcommand\algorithmicforeach{\textbf{for each}}
+\algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
+
+\setlength\parindent{0cm}
+
+\begin{document}
+
+\begin{center}
+  {\Large CIS572 Midterm Study Guide} \\\vspace{6pt}
+  Zayd Hammoudeh
+\end{center}
+
+\begin{multicols}{3}
+  \section*{Definitions}
+
+  \begin{itemize}
+    \item \textbf{Hyperparameter}: Any parameter whose value is set before the learning process begins.
+    \item \textbf{Hypothesis Space}: Specifies set of all functions a learning algorithm would search when constructing a model.
+    \item \textbf{Overfitting}: Hypothesis $h$ overfits the data if there exists an alternate hypothesis $h'$ such that $error_{train}(h) < error_{train}(h')$ but $error_{\mathcal{D}}(h) > error_{\mathcal{D}}(h')$ for the entire data distribution $\mathcal{D}$.
+  \end{itemize}
+
+  \section{Introduction}
+
+  \begin{itemize}
+    \item \textit{Combinatorial Optimization}: Find optimal object within a finite set. (e.g.,~greedy search)
+    \item \textit{Convex Optimization}: Gradient descent.
+    \item \textit{Constrained Optimization}: Linear programming
+  \end{itemize}
+
+  \textbf{Reinforcement Learning}: Interact with the world through ``actions'' and find a \textit{policy} of behavior that optimizes some ``rewards''
+
+  \begin{itemize}
+    \item \textit{Classification}: Predict a discrete/categorical value from a predefined set of values
+    \item \textit{Regression}: Predict a continuous/real value
+    \item \textit{Structured Prediction}: Predict a complex output as a sequence or tree
+  \end{itemize}
+
+  \noindent
+  \textbf{Performance Measure Selection}: Depends on the problem to be solved.
+
+  \section{Decision Trees}
+
+  \textbf{Inner Node}: Test and branch according to value of particular feature ${x_j \in \mathbf{x}}$
+
+  \noindent
+  \textbf{Leaf Nodes}: Specify class of $\mathbf{x}$
+
+  \begin{algorithm}[h]
+    \caption{ID3}\label{alg:ID3}
+    \begin{algorithmic}[1]
+      \If{All examples in same class $c$}
+        \Return Leaf node with label $c$
+      \EndIf
+      \State Select feature $x_j$
+      \State Generate new node $dt$ with test on $x_j$
+      \State Split training set based on value of $x_j$
+      \State Call algorithm recursively
+    \end{algorithmic}
+  \end{algorithm}
+
+  \noindent
+  \textbf{Entropy}: Quantifies uncertainty.  Can be seen as negative information.
+
+  \[ Gain(S,x) = H(S) - H(S\vert x) \]
+
+  \[ H(S\vert x) = \sum_{v\in Values(x)} \frac{\abs{S_v}}{\abs{S}} H(S_v) \]
+
+  \noindent
+  \textbf{Gain Ratio}: Measures how broadly \& uniformly attribute splits the data.  Relates information gain to how data is split.
+  \begin{itemize}
+    \item Generally more reliable than information gain.
+  \end{itemize}
+
+  \[SplitInfo(S,A) = -\sum_{i=1}^{c} \frac{\abs{S_i}}{\abs{S}} log_{2} \frac{S_i}{S} \]
+
+  \[ GainRatio(S,A) = \frac{InfoGain{S,A}}{SplitInfo(S,A)} \]
+
+  \textbf{Hypothesis Space}: All possible finite discrete-valued functions.  Definitely included given a finite training set.
+
+  \textbf{Disadvantages of ID3 and C4.5}
+  \begin{itemize}
+    \item Uses all training examples so sensitive to error/noises in training data.
+    \item Greedy variable selection that may converge to only a local optimum.
+  \end{itemize}
+
+  \textbf{Parity Features}: Decision trees cannot distinguish random features from parity (e.g.,~XOR) features
+
+  \textbf{Occam's Razor}: Prefer the simplest hypothesis that fits the data
+
+  \textbf{When to Use}:
+  \begin{itemize}
+    \item Instances describable by attribute value pairs.
+    \item Categorical output variable.
+    \item Interpretable learner is required.
+    \item Training data may contain errors
+  \end{itemize}
+
+  \section{Inductive Learning}
+
+  \textbf{Performance Measure}: Quantifies how different/bad a system's prediction is versus the truth.
+  \begin{itemize}
+    \item Achieved via the loss function.
+  \end{itemize}
+
+  Training and test data can be seen as being sampled from a probability distribution.
+  \[(\mathbf{x},y)\sim P(x,y)\]
+  \begin{itemize}
+    \item $P$ is unknown
+    \item Find a function $f:\mathbf{x} \rightarrow y$
+  \end{itemize}
+
+  Average loss on training data may be misleading since learning may \textit{memorize the data} and \textit{overestimate performance}
+
+  \textbf{Data}: Labeled instances consisting of training set, hold out set, \& test set.
+
+  \textbf{Features}: Attribute-value pairs which characterize each $\mathbf{x}$
+
+  \textbf{Hold-out}/\textbf{Validation Set}: Used for hyperparameter tuning.
+
+  \textbf{Goal}: Classifier that performs well on \textit{test data}, i.e.,~minimizes the \textit{expected loss}, not the training loss.
+
+  \section*{Inductive Biases}
+
+  \textbf{Inductive Bias}: Fundamental set of assumptions made by the learner about the target function that enables it to generalize beyond the training data.
+  \begin{itemize}
+    \item Many different functions $h\in\mathcal{H}$ may have same training error.
+  \end{itemize}
+
+
+
+  \textbf{Inductive Bias of Each Learner}
+  \begin{itemize}
+    \item \textit{Decision trees}: Imposed on search process. Shorter trees preferred over longer ones. Prefer to place variables with higher information gain closer to root.
+    \item \textit{Human}: Past experiences and limit of person's comprehension
+    \item \textit{k-Nearest Neighbors}: Classification of example will be most similar to classification of other instances nearby (in terms of distance metric).
+    \item \textit{Linear Regression}: Relationship between $\mathbf{X}$ and $y$ is linear.
+    \item \textit{Perceptron}: Linearly separable.  Each input variable votes independently towards final classification.
+    \item \textit{Support Vector Machine}: Distinct classes tend to be separated by wide margins.
+  \end{itemize}
+
+  \section*{Stopping Overfitting}
+  \begin{itemize}
+    \item \textit{Decision Tree}: Pre-prune (early stopping) or post-pruning
+  \end{itemize}
+\end{multicols}
+\end{document}

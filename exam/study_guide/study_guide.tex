@@ -12,11 +12,20 @@
 \titlespacing\subsection{0pt}{6pt plus 4pt minus 0pt}{4pt plus 2pt minus 0pt}
 
 % Imported via UltiSnips
+\usepackage{color}
+\newcommand{\colortext}[2]{{\color{#1} #2}}
+\newcommand{\red}[1]{\colortext{red}{#1}}
+\newcommand{\blue}[1]{\colortext{red}{#1}}
+\newcommand{\green}[1]{\colortext{green}{#1}}
+
+% Imported via UltiSnips
 \usepackage{amsmath}
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\sign}{sign}
 \usepackage{amsfonts}  % Used for \mathbb and \mathcal
 \usepackage{amssymb}
+\usepackage[bb=boondox]{mathalfa}
 
 % Imported via UltiSnips
 \usepackage{mathtools} % for "\DeclarePairedDelimiter" macro
@@ -41,7 +50,14 @@
   Zayd Hammoudeh
 \end{center}
 
+
 \begin{multicols}{3}
+\textbf{Goal of a Learner}: Minimize the \red{expected loss}
+
+\begin{itemize}
+  \item \textbf{Test Data}: Quantifies generalizability of an algorithm
+\end{itemize}
+
   \section*{Definitions}
 
   \begin{itemize}
@@ -187,13 +203,27 @@
 
   \textbf{Curse of Dimensionality}: ``Neighborhood'' becomes very large in high dimensional spaces
 
-  \subsection*{Distance Metrics}
+  \textbf{Effect of $k$}
+  \begin{itemize}
+    \item \textit{Increasing $k$}: Reduces variance and increases bias. Can lead to underfitting too high.
+    \item \textit{Decreasing $k$}: Can lead to overfitting if too low.
+  \end{itemize}
 
-  \vspace{8pt}\textbf{Minkowski}: $L_{\lambda} = \left( \sum_{k=1}^{p} \abs{x_k(i) - x_k(j)}^{\lambda}\right)^{\frac{1}{\lambda}}$
+  \textbf{Standardization}: Make all features equally important by dividing values by their standard deviation.
+  \begin{itemize}
+    \item No need to subtract mean since canceled out in Euclidean distance.
+  \end{itemize}
+
+  \subsection*{Distance Metrics}
+  \textbf{Minkowski}: $L_{\lambda} = \left( \sum_{k=1}^{p} \abs{x_k(i) - x_k(j)}^{\lambda}\right)^{\frac{1}{\lambda}}$
 
   \vspace{8pt}\textbf{Manhattan}: $L_1 = \sum_{k=1}^{p} \abs{x_k(i) - x_k(j)}$
 
   \vspace{8pt}$L_{\infty} = \max_{k}\abs{x_k(i),x_k(j)}$
+
+  \vspace{8pt}\textbf{Weighted Euclidean}:
+  \vspace{-4pt}
+  \[ d(i,j) = \left( \sum_{k=1}^{p} w_k \left(x_k(i) - x_k(j)\right)^{2} \right)^{1/2} \]
 
   \subsection*{When to Use}
   \begin{itemize}
@@ -214,9 +244,228 @@
   \begin{itemize}
     \item Slow query time $O(nd)$
     \item High memory requirements
+    \item Irrelevant or uncorrelated features must be removed
     \item Distance function must be carefully chosen
     \item Easily tricked by irrelevant attributes
     \item Typically cannot handle more than 30~features
+  \end{itemize}
+
+  \section{Perceptron}
+
+  Creates a linear decision boundary.
+
+  \subsection*{Update Rule}
+  \textbf{Initial}:
+
+  $\mathbf{w}^{(t)} = \vec{0}$ and $b^{(t)}=0$
+
+  \textbf{Update}:
+  \[ \mathbf{w}^{(t+1)} = \begin{cases}
+                            \mathbf{w}^{(t)}                  & y = \sign(\mathbf{w}^{(t)}\cdot\mathbf{x} +b) \\
+                            \mathbf{w}^{(t)} + y\mathbf{x}    & \text{Otherwise}
+                          \end{cases} \]
+
+  \[ y^{(t+1)} = \begin{cases}
+                   y^{(t)}      & y = \sign(\mathbf{w}^{(t)}\cdot\mathbf{x} +b) \\
+                   y^{(t)} + y  & \text{Otherwise}
+                 \end{cases} \]
+
+  \subsection*{Disadvantages}
+
+  \begin{itemize}
+    \item Inherently weights later examples more than earlier ones.  \textit{Solutions}:
+      \begin{itemize}
+        \item Shuffle training examples for each epoch
+        \item Use a weighted perceptron
+      \end{itemize}
+    \item \textit{Mediocre Generalization}: Finds a ``barely'' separating solution
+    \item \textit{Overtraining}: Test/validation accuracy rises then falls
+  \end{itemize}
+  \section{Linear Regression}
+
+  \textbf{Cost Function}: Measures the difference between the predicted and true values.
+
+  \textbf{Minimizing the Cost for Linear Regression}: Take the gradient and set the gradient equal to $\vec{0}$
+
+  \begin{align*}
+    J &= \frac{1}{2}(Xw-y)^{T}(Xw-y) \\
+    J &= \frac{1}{2}(w^{T}X^{T}Xw - w^{T}X^{T}y -y^{T}Xw + y^{T}y) \\
+    \nabla_{w}J &= X^{T}Xw-X^{T}y
+  \end{align*}
+
+  Setting equal to $\vec{0}$ yields:
+
+  \begin{align*}
+    X^{T}Xw - X^{T}y &= 0 \\
+    X^{T}Xw &= X^{T}y \\
+    w &= (X^{T}X)^{-1}X^{T}y \\
+  \end{align*}
+
+  \subsection{Advantages}
+
+  \begin{itemize}
+    \item Closed form optimal solution
+
+  \end{itemize}
+
+  \section{Logistic Regression}
+
+  Generates a condition probability $\Pr[Y\vert X]$
+
+  \textbf{Logistic Function}: $\sigma: \mathbb{R} \rightarrow (0,1) $
+  \[ \sigma(z) = \frac{1}{1+\exp(-z)} \]
+
+  \textbf{Decision Function}:
+
+  \[ \Pr[Y\vert X] = \frac{1}{1+\exp{-(w^{T}x + b)}} \]
+
+  \textbf{Likelihood}: $L(h) = P(D\vert h)$
+
+  \begin{align*}
+    P(D\vert h) = \prod_{i=1}^m P(\langle x_i,y\rangle \vert h)
+  \end{align*}
+
+  \section{Support Vector Machine}
+
+  \textbf{Vanilla SVM}: Creates a linear decision boundary.
+
+  \section{Linear Models}
+
+  \subsection{Regularizers}
+
+  \textbf{Role of Regularization}: \red{Adjust the inductive bias}
+
+  \vspace{6pt}\textbf{Challenge of Regularization}: Choosing the right $\lambda$ is hard and requires cross validation.
+
+  \textbf{$p$-Norms}:
+  \begin{itemize}
+    \item For $p<1$: More likely to get sparse representations
+  \end{itemize}
+
+  \textbf{L1}: Lasso
+  \begin{itemize}
+    \item Convex but not smooth
+    \item More resistant to outliers
+    \item Often used for feature selection as promotes sparse feature representations.  Helps make irrelevant features have zero weight.
+    \item Generally takes longer to train and less accurate
+  \end{itemize}
+
+  \textbf{L2}: Ridge
+  \begin{itemize}
+    \item Convex and smooth
+    \item Generally more accurate
+  \end{itemize}
+
+  \begin{itemize}
+    \item $L_1$ more resistant to outliers than $L_2$ since the penalty of outliers increases quadratically.
+    \item $L_1$ used as a feature selection method.
+    \item $L_2$ tends to lead to really small features all close to zero.
+  \end{itemize}
+
+  \subsection{Loss Function}
+
+  \textbf{Convex Loss Functions}: Guaranteed to converge near global minimum with gradient descent
+
+  \textbf{Smooth}: Property of the number of derivatives that are continuous.
+  \begin{itemize}
+    \item Small change in predicted value should lead to small change in loss.
+  \end{itemize}
+
+  \textbf{0/1 Loss}: (Very non-smooth)\\
+  $ \ell^{(\text{0/1})}(y,\hat{y}) = \mathbb{1}[y\hat{y} \leq 0] $
+
+  \textbf{Hinge Loss}:
+  $ \ell^{(\text{hin})}(y,\hat{y}) = \max\{0, 1-y\hat{y}\} $
+
+  \textbf{Logistic}:
+  $ \ell^{(\text{log})}(y,\hat{y}) = -\log(1+\exp[-y\hat{y}]) $
+
+  \textbf{Exponential}:
+  $ \ell^{(\text{exp})}(y,\hat{y}) = \exp[-y\hat{y}] $
+
+  \textbf{Square Loss}:
+  $ \ell^{(\text{sqr})}(y,\hat{y}) = (y - \hat{y})^{2} $
+
+  \section{Neural Networks}
+
+  \textbf{Threshold Logic Unit}:
+  \vspace{-4pt}
+  \[ f(\mathbf{x}) = \begin{cases}
+                          1 & \mathbf{w}^{T}\mathbf{x} + b \\
+                          0 & \text{Otherwise}
+                      \end{cases} \]
+
+  \textbf{OR}: $or(a,b) =\mathbb{1}(a + b -0.5\geq0)$
+
+  \vspace{6pt}\textbf{AND}: $and(a,b) =\mathbb{1}(a + b -1.5\geq0)$
+
+  \vspace{6pt}\textbf{NOT}: $not(a) =\mathbb{1}(-a + 0.5\geq0)$
+
+  \textbf{Computational Graph Nodes}:
+  \begin{itemize}
+    \item Dot (vector)
+    \item Add (scalar)
+    \item $sign$ (scalar)
+  \end{itemize}
+
+  \textbf{Leave-One-Out-Cross Validation}: Used when training time is manageable and training dataset is small.
+  \begin{enumerate}
+    \item For each $i$ in dataset of size $m$
+      \begin{enumerate}
+        \item Leave out item $i$ from training set and use as validation
+        \item Use all other data to train weight vector
+        \item Measure error predicting label of $i$\textsuperscript{th} sample
+      \end{enumerate}
+    \item Repeat $m$ times
+  \end{enumerate}
+
+  \subsection*{Gradient Descent}
+  \textbf{Batch Gradient Descent}:
+  \begin{itemize}
+    \item Complexity of update grows linearly with size of batch (dataset).
+  \end{itemize}
+
+  \textbf{Stochastic Gradient}: Gradient estimate is unbiased. Minimizes the \red{expected risk} not the empirical risk.  May jump out of local minima. High variance on gradient
+  \begin{itemize}
+    \item Complexity of update grows linearly with size of batch (dataset).
+  \end{itemize}
+
+  \textbf{Minibatch Gradient Descent}: Lower variance on gradient.
+  \begin{itemize}
+    \item Approximates gradient whole dataset.
+    \item May jump out of \textit{shallow} local minima.
+  \end{itemize}
+
+  \subsection*{Multilayer Perceptron}
+
+  \begin{itemize}
+    \item If no non-linearities, layers in series behave as if a single layer.
+  \end{itemize}
+
+  \subsection*{Loss Functions}
+
+  \begin{itemize}
+    \item \textbf{Cross Entropy}:
+  \end{itemize}
+  \vspace{-5pt}
+  \[ H(p,q) = \mathbb{E}_{p}[-\log(q)] \]
+  \begin{itemize}
+    \item \textbf{Logistic Loss}:
+  \end{itemize}
+  \vspace{-5pt}
+  \[ \mathcal{L}(w,b) = -\sum_{(\mathbf{x}_i,y_i)\in\mathcal{D}} \log\bigg( \sigma\Big(y_i(\mathbf{w}^T\mathbf{x}+b)\Big)\bigg) \]
+
+  \subsection*{Activation Functions}
+
+  \begin{itemize}
+    \item $\sign(x)$
+    \item $\sigma(x) = \frac{1}{1+\exp{-x}}$
+    \item $ReLU(x) = \max\{0,x\}$
+    \item $SoftPlus(x) = SmoothReLU(x) = \log(1+e^{x})$. Gradient is the sigmoid function. Differentiable version of ReLU\@.
+    \item $ELU(x)= \begin{cases}
+                      x & x \geq 0 \\
+                      \alpha(e^{x} - 1) & \text{Otherwise}
+                    \end{cases}$
   \end{itemize}
 
   \section*{Inductive Biases}
@@ -225,8 +474,6 @@
   \begin{itemize}
     \item Many different functions $h\in\mathcal{H}$ may have same training error.
   \end{itemize}
-
-
 
   \textbf{Inductive Bias of Each Learner}
   \begin{itemize}
@@ -240,7 +487,9 @@
 
   \section*{Stopping Overfitting}
   \begin{itemize}
-    \item \textit{Decision Tree}: Pre-prune (early stopping) or post-pruning
+    \item \textit{Decision Tree}: Pre-prune (early stopping) or post-pruning.  Maximum number of remaining examples before creating a leaf.
+    \item \textit{$k$ Nearest Neighbors}: Increase $k$
+    \item \textit{Logistic Regression}: $L_2$ regularization
   \end{itemize}
 \end{multicols}
 \end{document}

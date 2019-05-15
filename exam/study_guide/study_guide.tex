@@ -9,7 +9,7 @@
 
 \usepackage{titlesec}  % Used to adjust title heading
 % Format:  \titlespacing{command}{left spacing}{before spacing}{after spacing}[right]
-\titlespacing\subsection*{0pt}{6pt plus 4pt minus 0pt}{4pt plus 2pt minus 0pt}
+\titlespacing\subsection{0pt}{6pt plus 4pt minus 0pt}{4pt plus 2pt minus 0pt}
 
 % Imported via UltiSnips
 \usepackage{amsmath}
@@ -31,7 +31,8 @@
 \algnewcommand\algorithmicforeach{\textbf{for each}}
 \algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
 
-\setlength\parindent{0cm}
+\setlength{\parindent}{0cm}
+\setlength{\itemsep}{0cm}
 
 \begin{document}
 
@@ -47,6 +48,9 @@
     \item \textbf{Hyperparameter}: Any parameter whose value is set before the learning process begins.
     \item \textbf{Hypothesis Space}: Specifies set of all functions a learning algorithm would search when constructing a model.
     \item \textbf{Overfitting}: Hypothesis $h$ overfits the data if there exists an alternate hypothesis $h'$ such that $error_{train}(h) < error_{train}(h')$ but $error_{\mathcal{D}}(h) > error_{\mathcal{D}}(h')$ for the entire data distribution $\mathcal{D}$.
+     \begin{itemize}
+       \item Fitting training data very closely but not generalizing well
+     \end{itemize}
   \end{itemize}
 
   \section{Introduction}
@@ -146,8 +150,74 @@
   \textbf{Features}: Attribute-value pairs which characterize each $\mathbf{x}$
 
   \textbf{Hold-out}/\textbf{Validation Set}: Used for hyperparameter tuning.
+  \begin{itemize}
+    \item Never ``peek'' at the test set
+  \end{itemize}
 
-  \textbf{Goal}: Classifier that performs well on \textit{test data}, i.e.,~minimizes the \textit{expected loss}, not the training loss.
+  \textbf{Generalization Goal}: Classifier that performs well on \textit{test data}, i.e.,~minimizes the \textit{expected loss}, not the training loss.
+
+  \textbf{Reasons a Dataset is not Learnable}
+  \begin{itemize}
+    \item Noise in training data
+    \item Same input may correlate to multiple output labels
+    \item Provided features insufficient for learning
+  \end{itemize}
+
+  \section{$k$-Nearest Neighbors}
+
+  \textbf{Parametric Learner}: A particular functional form is assumed.
+  \begin{itemize}
+    \item May have high bias if real data has different functional form.
+  \end{itemize}
+
+  \textbf{Non-parametric Learner}: Distribution or density estimate is data driven with relatively few assumptions.
+  \begin{itemize}
+    \item \textit{Model complexity is data driven.}
+  \end{itemize}
+
+  \textbf{Learning Algorithm}: Store training examples
+
+  \textbf{Prediction Algorithm}: Classify new example by finding the example(s) nearest to it.
+  \begin{itemize}
+    \item \textit{Option~\#1}: Use the most frequently occurring class.
+    \item \textit{Option~\#2}: Assign each of $k$ neighbors weight based on distance.
+  \end{itemize}
+
+  \textbf{Decision Boundary}: Not explicit in KNN\@. Decision boundary form a subset of the Voronoi diagram
+
+  \textbf{Curse of Dimensionality}: ``Neighborhood'' becomes very large in high dimensional spaces
+
+  \subsection*{Distance Metrics}
+
+  \vspace{8pt}\textbf{Minkowski}: $L_{\lambda} = \left( \sum_{k=1}^{p} \abs{x_k(i) - x_k(j)}^{\lambda}\right)^{\frac{1}{\lambda}}$
+
+  \vspace{8pt}\textbf{Manhattan}: $L_1 = \sum_{k=1}^{p} \abs{x_k(i) - x_k(j)}$
+
+  \vspace{8pt}$L_{\infty} = \max_{k}\abs{x_k(i),x_k(j)}$
+
+  \subsection*{When to Use}
+  \begin{itemize}
+    \item Lots of training data
+    \item Instances map to points in $\mathbb{R}^n$
+    \item Less than 20~features
+  \end{itemize}
+
+  \subsection*{Advantages}
+  \begin{itemize}
+    \item Fast to train
+    \item Easy to implement
+    \item Learn complex and flexible decision boundaries, i.e.,~target functions
+    \item No loss of information
+  \end{itemize}
+
+  \subsection*{Disadvantages}
+  \begin{itemize}
+    \item Slow query time $O(nd)$
+    \item High memory requirements
+    \item Distance function must be carefully chosen
+    \item Easily tricked by irrelevant attributes
+    \item Typically cannot handle more than 30~features
+  \end{itemize}
 
   \section*{Inductive Biases}
 

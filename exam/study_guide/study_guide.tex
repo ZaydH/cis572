@@ -1,6 +1,6 @@
 \documentclass[10pt]{article}
 
-\usepackage[margin=0.1in]{geometry}
+\usepackage[margin=0.25in]{geometry}
 
 % Enable (uncolored) cross-reference hyperlinks
 \usepackage[colorlinks=false]{hyperref}
@@ -15,7 +15,7 @@
 \usepackage{color}
 \newcommand{\colortext}[2]{{\color{#1} #2}}
 \newcommand{\red}[1]{\colortext{red}{#1}}
-\newcommand{\blue}[1]{\colortext{red}{#1}}
+\newcommand{\blue}[1]{\colortext{blue}{#1}}
 \newcommand{\green}[1]{\colortext{green}{#1}}
 
 % Imported via UltiSnips
@@ -52,7 +52,7 @@
 
 
 \begin{multicols}{3}
-\textbf{Goal of a Learner}: Minimize the \red{expected loss}
+\textbf{Goal of Learner}: Minimize \red{expected loss}
 
 \begin{itemize}
   \item \textbf{Test Data}: Quantifies generalizability of an algorithm
@@ -63,6 +63,7 @@
   \begin{itemize}
     \item \textbf{Hyperparameter}: Any parameter whose value is set before the learning process begins.
     \item \textbf{Hypothesis Space}: Specifies set of all functions a learning algorithm would search when constructing a model.
+    \item \textbf{Margin}: \red{Two} times the distance from the hyperplane to the nearest training example
     \item \textbf{Overfitting}: Hypothesis $h$ overfits the data if there exists an alternate hypothesis $h'$ such that $error_{train}(h) < error_{train}(h')$ but $error_{\mathcal{D}}(h) > error_{\mathcal{D}}(h')$ for the entire data distribution $\mathcal{D}$.
      \begin{itemize}
        \item Fitting training data very closely but not generalizing well
@@ -202,6 +203,9 @@
   \textbf{Decision Boundary}: Not explicit in KNN\@. Decision boundary form a subset of the Voronoi diagram
 
   \textbf{Curse of Dimensionality}: ``Neighborhood'' becomes very large in high dimensional spaces
+  \begin{itemize}
+    \item Distance becomes less significant as dimension increases
+  \end{itemize}
 
   \textbf{Effect of $k$}
   \begin{itemize}
@@ -265,9 +269,9 @@
                             \mathbf{w}^{(t)} + y\mathbf{x}    & \text{Otherwise}
                           \end{cases} \]
 
-  \[ y^{(t+1)} = \begin{cases}
-                   y^{(t)}      & y = \sign(\mathbf{w}^{(t)}\cdot\mathbf{x} +b) \\
-                   y^{(t)} + y  & \text{Otherwise}
+  \[ b^{(t+1)} = \begin{cases}
+                   b^{(t)}      & y = \sign(\mathbf{w}^{(t)}\cdot\mathbf{x} +b) \\
+                   b^{(t)} + y  & \text{Otherwise}
                  \end{cases} \]
 
   \subsection*{Disadvantages}
@@ -295,22 +299,39 @@
 
   Setting equal to $\vec{0}$ yields:
 
+  If errors below to a normal distribution, value \red{minimizing least square error equivalent to maximum likelihood}
+
+  \textbf{\blue{Maximum a posteriori}} (MAP): Most probable hypothesis given the data
+  \begin{enumerate}
+    \item Derived \red{from maximum likelihood}
+    \item $P(D)$ unrelated to $h$ so ignored in MAP
+  \end{enumerate}
+
+  \subsection*{Closed Form}
+
   \begin{align*}
     X^{T}Xw - X^{T}y &= 0 \\
     X^{T}Xw &= X^{T}y \\
     w &= (X^{T}X)^{-1}X^{T}y \\
   \end{align*}
 
-  \subsection{Advantages}
+  \subsection*{Advantages}
 
   \begin{itemize}
     \item Closed form optimal solution
+    \item Unique global optimum
+  \end{itemize}
 
+  \subsection*{Potential Problems}
+
+  \begin{itemize}
+    \item $X^{T}X$ must be invertible
+    \item May need to transform data to make it linearly separable
   \end{itemize}
 
   \section{Logistic Regression}
 
-  Generates a condition probability $\Pr[Y\vert X]$
+  \red{Probabilistic Model}: Generates a condition probability $\Pr[Y\vert X]$
 
   \textbf{Logistic Function}: $\sigma: \mathbb{R} \rightarrow (0,1) $
   \[ \sigma(z) = \frac{1}{1+\exp(-z)} \]
@@ -321,13 +342,130 @@
 
   \textbf{Likelihood}: $L(h) = P(D\vert h)$
 
+  Since samples are i.i.d.:
   \begin{align*}
-    P(D\vert h) = \prod_{i=1}^m P(\langle x_i,y\rangle \vert h)
+    P(D\vert h) &= \prod_{i=1}^m P(\langle x_i,y\rangle \vert h) \\
+                &= \prod_{i=1}^{m}P(y_i\vert x_i;h) P(x_i)
   \end{align*}
+
+  $P(x_i)$ is a constant and since $log$ is concave we can apply it to the probability:
 
   \section{Support Vector Machine}
 
-  \textbf{Vanilla SVM}: Creates a linear decision boundary.
+  \textbf{Linear SVM}: Creates a linear decision boundary.
+
+  \textbf{Margin}: \red{Two} times the distance from the hyperplane to the nearest training example
+
+  \textbf{Normal}: Vector $w$ is orthogonal to the decision boundary.  Use its unit vector $\frac{w}{\norm{w}}$
+
+  \subsection*{Support Vectors}
+
+  \textit{Support vectors}: Define the decision boundary. \red{Lie on the edge of the margin}
+
+  Distance to the hyperplane is:
+
+  \[ \gamma_i = y_i \left(\frac{w}{\norm{w}} x_i + \frac{w_0}{\norm{w}}\right) \]
+
+  Define $M=\min_i \gamma_i$ where $2M$ is the \blue{margin of the hyperplane}
+
+  \textbf{Goal}: $\max_{w,w_0}\min_{i} \gamma_i$
+
+  \subsection*{Primal Formulation}
+  \begin{enumerate}
+    \item Define $\norm{w}M = 1$.  Reformulate as $\min$ by instead maximizing $\norm{w}$
+    \item Maximize $\norm{w}^2$ which is same as maximizing $\norm{w}$
+  \end{enumerate}
+
+  \blue{Primal Formulation}
+  \begin{align*}
+    \text{min }    &\norm{w}^{2}\\
+    \text{w.r.t. } &w,w_0 \\
+    \text{s.t. }   &y_i(w\cdot \phi(x_i) +w_0) \geq 1
+  \end{align*}
+
+  \red{Quadratic programming} problem \& convex
+
+  \subsection*{Dual Formulation}
+  \begin{align*}
+    \text{max }    &\sum_{i}\alpha_i - \frac{1}{2}\sum_{i,j}y_{i}y_{j}\alpha_{i}\alpha_{j}(x_i\cdot x_j) \\
+    \text{w.r.t. } &\alpha \\
+    \text{s.t. }   &\alpha_i \geq 0 \\
+                   & \sum_i \alpha_i y_i = 0
+  \end{align*}
+
+  \blue{Support Vector}: Any $x_i$ with $\alpha_i>0$
+
+  \textbf{Output Prediction}:
+
+  \[h(x) = \sign\bigg(\sum_{i=1}^{m}\alpha_{i}y_{i}(x_i\cdot x) + w_0\bigg) \]
+
+  \subsection*{Kernels}
+  \textbf{Kernel}: Function $K:\mathbb{R}^{n}\times\mathbb{R}^{n} \rightarrow \mathbb{R}$ that corresponds to a \blue{feature mapping} $\phi$:
+
+  \[K(x_1,x_2)=\phi(x_i)\cdot\phi(x_j) \]
+
+  Dot products are defined as:
+
+  \[\phi(x_i) \cdot \phi(x_j) = \cos\angle(x_i,x_j) \]
+
+  where $\angle$ is the angle between vectors $x_i$ and $x_j$ making a kernel a form of \red{similarity}.
+
+  \textbf{\blue{Dual Formulation}}: Replace $x_i$ \& $x$ with $\phi(x_i)$ \& $\phi(x)$ respectively
+
+  \textbf{\blue{Kernel Trick}}: Solve the dual with the kernel function eliminates needs to find feature mapping directly.
+
+  \subsubsection*{Kernel Types}
+
+  \textbf{Linear}: $K(x_i,x_j)=x_{i}^{T}x_j$
+
+  \textbf{Polynomial}: $K(x_i,x_j)=(1+ x_{i}^{T}x_j)^p$
+
+  \textbf{Gaussian} (RBF): \\
+  $K(x_i,x_j)=\exp\left(-\frac{\norm{x_{i} - x_{j}}^2}{2\sigma^2}\right)$
+
+  \textbf{Sigmoid}: $K(x_i,x_j) = \tanh(\beta_{0} x_{i}^{T}x_{j} +\beta_1)$
+
+  \textbf{Custom Kernel Function}: May be application specific
+
+  \subsection{Soft-margin SVM}
+
+  \textbf{Use Case}: Data that is \red{noisy} or \red{not linearly separable}
+
+  \textbf{\blue{Soft Error}}: $\sum_{i}\xi_i$
+
+  Allow for misclassified samples.  One soft error term $\xi_i$ for each training sample~$i$
+
+  \begin{align*}
+    \text{min }    &\frac{1}{2}\norm{w}^{2} + C\sum_i\xi_i \\
+    \text{w.r.t. } &w,w_0, \xi_i \\
+    \text{s.t. }   &y_i(w\cdot \phi(x_i) +w_0) \geq 1-\xi_i \\
+                   &\xi_i \geq 0
+  \end{align*}
+
+  If $C=0$, no penalty for soft errors.  If $C$ large, emphasis is on soft errors.
+
+  \subsection*{Multi-class SVM}
+
+  \textbf{One-vs-All}
+  \begin{itemize}
+    \item $n$ total classifiers
+    \item Train each classifier for one class versus all other classes
+    \item Choose the class with the largest margin
+  \end{itemize}
+
+  \textbf{One-vs-One}
+  \begin{itemize}
+    \item $\binom{n}{2}$ total classifiers
+    \item Train classifier between each pair of classes
+    \item Choose the class selected by most classifiers
+  \end{itemize}
+
+  \subsection*{Overfitting Symptoms}
+
+  \begin{itemize}
+    \item Large number of instances are support vectors
+    \item Low margin
+  \end{itemize}
 
   \section{Linear Models}
 
@@ -391,7 +529,7 @@
   \textbf{Threshold Logic Unit}:
   \vspace{-4pt}
   \[ f(\mathbf{x}) = \begin{cases}
-                          1 & \mathbf{w}^{T}\mathbf{x} + b \\
+                          1 & \mathbf{w}^{T}\mathbf{x} + b \geq 0 \\
                           0 & \text{Otherwise}
                       \end{cases} \]
 
@@ -420,15 +558,16 @@
   \end{enumerate}
 
   \subsection*{Gradient Descent}
+
+  Generally \red{steepest descent} unless using higher order methods.
+
   \textbf{Batch Gradient Descent}:
   \begin{itemize}
     \item Complexity of update grows linearly with size of batch (dataset).
+    \item Optimizes the \blue{empirical error}
   \end{itemize}
 
   \textbf{Stochastic Gradient}: Gradient estimate is unbiased. Minimizes the \red{expected risk} not the empirical risk.  May jump out of local minima. High variance on gradient
-  \begin{itemize}
-    \item Complexity of update grows linearly with size of batch (dataset).
-  \end{itemize}
 
   \textbf{Minibatch Gradient Descent}: Lower variance on gradient.
   \begin{itemize}
@@ -488,8 +627,9 @@
   \section*{Stopping Overfitting}
   \begin{itemize}
     \item \textit{Decision Tree}: Pre-prune (early stopping) or post-pruning.  Maximum number of remaining examples before creating a leaf.
-    \item \textit{$k$ Nearest Neighbors}: Increase $k$
+    \item \textit{$k$~Nearest Neighbors}: Increase~$k$
     \item \textit{Logistic Regression}: $L_2$ regularization
+    \item \textit{SVM}: Regularization parameter $c$ for the slack variables
   \end{itemize}
 \end{multicols}
 \end{document}

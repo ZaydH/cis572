@@ -1,0 +1,51 @@
+%   Define all symbols that are used throughout the document
+\newcommand{\toolname}{DeepPU}
+\newcommand{\attLossBase}{ttractive loss}
+\newcommand{\attLossCap}{A\attLossBase}
+\newcommand{\attLossLow}{a\attLossBase}
+
+\newcommand{\etal}{~et~al.}
+\newcommand{\elkan}{Elkan \&~Noto}
+\newcommand{\kmnist}{K\=/MNIST}   % Use unbreakable hyphen
+\newcommand{\cifarT}{CIFAR\=/10}  % Use unbreakable hyphen
+
+\newcommand{\Pos}{\mathcal{P}}
+\newcommand{\Unlabel}{\mathcal{U}}
+
+% Attulsive loss function names
+\newcommand{\lAtt}{\mathcal{L}_{\text{Att}}}
+\newcommand{\lAttBase}[1]{\mathcal{L}_{\text{Att-}#1}}
+\newcommand{\lPosAtt}{\lAttBase{\Pos}}
+\newcommand{\lUAtt}{\lAttBase{\Unlabel}}
+\newcommand{\lPuBase}[1]{\mathcal{L}_{\text{PU-}#1}}
+\newcommand{\lPu}{\lPuBase{\Pos{/}\Unlabel}}
+\newcommand{\lPuP}{\lPuBase{\Pos}}
+\newcommand{\lPuU}{\lPuBase{\Unlabel}}
+
+\newcommand{\xBase}{\mathbf{x}}
+\newcommand{\xDomain}{\mathcal{X}}
+\newcommand{\lTrip}{\mathcal{L}_{\text{Triplet}}}
+\newcommand{\SiamFunc}{f}
+\newcommand{\exA}{\xBase_{a}}
+\newcommand{\exP}{\xBase_{p}}
+\newcommand{\exN}{\xBase_{n}}
+
+% Symbols used in drawing of Deep PU
+\newcommand{\xHatP}{\hat{\xBase}_{p}}
+\newcommand{\xHatN}{\hat{\xBase}_{n}}
+\newcommand{\zBase}{\mathbf{z}}
+\newcommand{\zS}{\zBase_{s}}
+\newcommand{\zP}{\zBase_{p}}
+\newcommand{\zN}{\zBase_{n}}
+% Function names for the DeepPU architecture
+\newcommand{\fPU}{g}
+\newcommand{\fPUenc}{\fPU_{\text{enc}}}
+\newcommand{\fPUp}{\fPU_{p}}
+\newcommand{\fPUn}{\fPU_{n}}
+
+% Symbols related to prediction of DeepPU
+\newcommand{\distSym}{\delta}
+\newcommand{\siamDist}[3]{\puDist{#1\left(#2\right)}{#1\left(#3\right)}}
+\newcommand{\puDist}[2]{\distSym\left(#1, #2\right)}
+\newcommand{\puDistDiff}{\puDist{\xBase}{\xHatP} - \puDist{\xBase}{\xHatN}}
+\newcommand{\sign}[1]{\text{sgn}\Big(#1\Big)}

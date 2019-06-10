@@ -1,0 +1,146 @@
+\documentclass[11pt,dvipsnames,usenames,aspectratio=169]{beamer}  % Add handout to options to disable overlays
+
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{%
+  \usetheme{CambridgeUS}    % or try default, Darmstadt, Warsaw, ...
+  \usecolortheme{whale}     % or try albatross, beaver, crane, ...
+  \usefonttheme{serif}          % or try default, structurebold, ...
+  % \usefonttheme[onlymath]{serif}
+  % \setbeamertemplate{navigation symbols}{}
+  % \setbeamercovered{transparent}
+
+  \setbeamercolor{title}{fg=white}
+  \setbeamerfont{title}{series=\bfseries}
+  \setbeamercolor{frametitle}{fg=black}
+  \setbeamerfont{frametitle}{series=\bfseries}
+
+  \setbeamercolor{section in head/foot}{fg=white}
+  \setbeamerfont{section in head/foot}{series=\bfseries}
+  \setbeamercolor{subsection in head/foot}{fg=white}
+  \setbeamerfont{subsection in head/foot}{series=\bfseries}
+  \setbeamercolor{author in head/foot}{fg=white}
+  \setbeamerfont{author in head/foot}{series=\bfseries}
+  \setbeamercolor{title in head/foot}{fg=white}
+  \setbeamerfont{title in head/foot}{series=\bfseries}
+
+  \setbeamercolor{block title}{use=structure,fg=white,bg=title in head/foot.bg}
+  \setbeamerfont{block title}{series=\bfseries}
+  \setbeamercolor{block body}{use=structure,fg=black,bg=black!1!white}
+}
+
+% Support graying out frame elements
+\newcommand{\FrameOpague}{\setbeamercovered{again covered={\opaqueness<1->{40}}}}
+% Transition slide
+\newcommand{\transitionFrame}[1]{%
+{%
+  \begin{frame}[plain,noframenumbering]{}{} % the plain option removes the sidebar and header from the title page
+    \setbeamertemplate{final page}[text]{\Large \textbf{#1}}
+    \usebeamertemplate{final page}
+  \end{frame}}
+}
+
+% \usepackage{hyperref}     % Loaded automatically by beamer
+\usepackage{pgfplots}       % Used to generate embedded plots
+\pgfplotsset{compat=1.13}
+
+% Imported via UltiSnips
+\usepackage{mathtools} % for "\DeclarePairedDelimiter" macro
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+% Imported via UltiSnips
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\usepackage{amsfonts}  % Used for \mathbb and \mathcal
+\usepackage{amssymb}
+% Imported via UltiSnips
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,decorations.markings,shadows,positioning,calc,backgrounds,shapes,overlay-beamer-styles}
+
+\newcommand{\pos}{\mathcal{P}}
+\newcommand{\unlabel}{\mathcal{U}}
+
+\usepackage{color}
+\newcommand{\blue}[1]{{\color{Blue} #1}}
+\newcommand{\red}[1]{{\color{red} #1}}
+\newcommand{\green}[1]{{\color{ForestGreen} #1}}
+
+\input{macros}
+
+% Here's where the presentation starts, with the info for the title slide
+\title[Deep Positive-Unlabeled Learning]{Constructing a Positive-Unlabeled Learner using Deep Generative Models}
+\author[Zayd Hammoudeh]{%
+  \href{mailto:zayd@cs.uoregon.edu}{\textbf{Zayd Hammoudeh}}\inst{1}  % \textsuperscript{(\Letter)}
+  % \and
+  % \href{mailto:lowd@cs.uoregon.edu}{Daniel Lowd}\inst{1}
+}
+
+\institute[Univ.\ Oregon]{%
+  \textsuperscript{1}\textbf{University of Oregon}\\
+  Eugene, OR, USA\\
+  \texttt{\href{mailto:zayd@cs.uoregon.edu}{zayd@cs.uoregon.edu}}
+  % \texttt{{zayd, lowd}@ucsc.edu}
+}
+\date{\today}
+
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{What is PU Learning?}
+  \begin{itemize}[<+->]
+    \setlength{\itemsep}{14pt}
+    \item PU = Positive-Unlabeled
+    \item Form of \blue{\textbf{binary classification}}
+    \item Example of \textit{partially-supervised learning}
+    \item \green{\textbf{Non-traditional}} training dataset $\mathcal{S} \coloneqq \pos \cup \unlabel$
+      \begin{itemize}[<+->]
+        \item $\pos$: Labeled examples all from positive class
+        \item $\unlabel$: Unlabeled training set with \blue{\textbf{unknown distribution}} of positive \& negative examples
+      \end{itemize}
+    \item \textit{Example Applications}: Protein-similarity prediction, land-cover classification, targeted marketing, deceptive/incentivized review identification
+      \begin{itemize}[<+->]
+        \item Both \blue{inductive} \& \red{transductive} domains
+        \item We will focus on the \red{transductive} learning
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Siamese Networks}
+  \begin{itemize}
+    \item
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Our Architecture}
+  \begin{center}
+    \scalebox{0.65}{\input{img/deep_pu.tex}}
+  \end{center}
+
+  \begin{itemize}
+    \setlength{\itemsep}{10pt}
+    \onslide<2->{\item Shared input encoder}
+    \onslide<3->{\item Latent vector $\mathbf{z}$ partitioned into three parts}
+    \onslide<4->{\item $g_{p}$: Decoder for \blue{positive}-examples}
+    \onslide<5->{\item $g_{n}$: Decoder for \red{negative}-examples}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Experiments}
+  \begin{itemize}
+    \setlength{\itemsep}{16pt}
+    \item \blue{\textbf{Dataset}}: MNIST
+    \item \blue{\textbf{Baseline}}: Elkan \& Noto with Logistic Regression
+    \item \blue{\textbf{Labeling Frequency}}: 50\%
+  \end{itemize}
+\end{frame}
+
+\end{document}

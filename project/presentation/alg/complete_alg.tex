@@ -1,0 +1,18 @@
+\begin{algorithmic}[1]
+  \Function{\toolname training}{$\pos,\unlabel$}
+    \State Train $\fPUenc$ \& $\fPUn$ as an AE over $\unlabel$ \Comment{$\fPUn$ decodes positive \& negative classes}
+    \State Freeze all weights in $\fPUenc$ except $\zP$
+    \State Train $\fPUenc$ \& $\fPUp$ as an AE over $\pos$ \Comment{$\fPUp$ decodes positives only}
+    \State Unfreeze all weights in $\fPUenc$
+    \Statex
+    \While{\text{not converged}}  \Comment{Force $\fPUn$ to forget how to reconstruct $\pos$}
+      % \State Increment value of $\alpha$ \Comment{Increasing temperature parameter}
+      \While{\text{epoch not complete}}
+        \State Select batch $b_{\Pos}$ from $\Pos$
+        \State Update $\vec{\theta}$ via $\nabla\lPuP(b_{\Pos})$
+        \State Select batch $b_{\Unlabel}$ from $\Unlabel$
+        \State Update $\vec{\theta}$ via $\nabla\lPuU(b_{\Unlabel})$
+      \EndWhile
+    \EndWhile
+  \EndFunction
+\end{algorithmic}

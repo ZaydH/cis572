@@ -63,10 +63,16 @@
 \usetikzlibrary{arrows.meta,decorations.markings,shadows,positioning,calc,backgrounds,shapes,overlay-beamer-styles}
 % Packages used for the Convolutional NN drawing
 \usepackage{graphicx}
+\graphicspath{{./img/}}
 \usepackage{color}
 \usepackage{pgfplots}
 \usepackage{pgf-umlsd}
 \usepackage{ifthen}
+% Imported via UltiSnips
+\usepackage[noend]{algpseudocode}
+\usepackage[Algorithm,ruled]{algorithm}
+\algnewcommand\algorithmicforeach{\textbf{for each}}
+\algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
 
 \newcommand{\pos}{\mathcal{P}}
 \newcommand{\unlabel}{\mathcal{U}}
@@ -168,17 +174,168 @@
   \end{itemize}
 \end{frame}
 
+\begin{frame}{Custom Loss Functions}
+  ``\blue{\textbf{Attractive}}'' Loss for~$\pos$
+  \begin{equation}\label{eq:Loss:AttP}
+    \lPosAtt = \max\Big\{ \puDistDiff + \alpha, 0 \Big\}
+  \end{equation}
+
+  \vfill
+  ``\green{\textbf{Pick-a-Side}}'' Loss for~$\unlabel$
+  \begin{equation}\label{eq:Loss:AttU}
+    \lUAtt = \max\Big\{ - \big\lvert\puDistDiff\big\rvert + \alpha, 0 \Big\}
+  \end{equation}
+
+  \vfill
+  Unfortunately, there is no time now to discuss these, but we can in Q\&A if interested\ldots
+\end{frame}
+
+\begin{frame}{Training Algorithm (Sketch)}
+  \input{alg/complete_alg}
+\end{frame}
+
 \begin{frame}{Experiments}
   \begin{itemize}
     \setlength{\itemsep}{16pt}
     \item \blue{\textbf{Dataset}}: MNIST
+      \begin{itemize}
+        \item \textit{Positive Class}: $4$
+        \item \textit{Negative Class}: $9$
+      \end{itemize}
     \item \blue{\textbf{Baseline}}: Elkan \& Noto with Logistic Regression
     \item \blue{\textbf{Dataset Sizes}}:
       \begin{itemize}
-        \item $\abs{\pos}$: \~3,000
-        \item $\abs{\unlabel}$: \~6,000 evenly split between positive \& negative classes
+        \item $\abs{\pos}$: ${\sim}$3,000
+        \item $\abs{\unlabel}$: ${\sim}$6,000 evenly split between positive \& negative classes
       \end{itemize}
     \item \blue{\textbf{Labeling Frequency}}: 50\%
+  \end{itemize}
+
+  \vspace{16pt}
+  Let's look how an example matches our earlier intuition\ldots
+\end{frame}
+
+\begin{frame}{Decoder Outputs --- Epoch \red{0}}
+  \begin{columns}
+    \begin{column}{0.59\textwidth}
+      \begin{center}
+        \includegraphics[scale=0.44]{deep-pu_epoch=000.jpg}
+      \end{center}
+    \end{column}
+    \begin{column}{0.41\textwidth}
+      \begin{itemize}[<+->]
+        \setlength{\itemsep}{20pt}
+        \item Positive decoder reconstructs everything as~4
+        \item Negative decoder reconstructs both~4 and~9
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Decoder Outputs --- Epoch \red{1}}
+  \begin{columns}
+    \begin{column}{0.59\textwidth}
+      \begin{center}
+        \includegraphics[scale=0.44]{deep-pu_epoch=001.jpg}
+      \end{center}
+    \end{column}
+    \begin{column}{0.41\textwidth}
+      \begin{itemize}[<+->]
+        \setlength{\itemsep}{20pt}
+        \item Not much change after one epoch
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Decoder Outputs --- Epoch \red{10}}
+  \begin{columns}
+    \begin{column}{0.59\textwidth}
+      \begin{center}
+        \includegraphics[scale=0.44]{deep-pu_epoch=010.jpg}
+      \end{center}
+    \end{column}
+    \begin{column}{0.41\textwidth}
+      \begin{itemize}[<+->]
+        \setlength{\itemsep}{20pt}
+        \item Positive decoder still unchanged
+        \item Negative decoder starting to close \blue{$4$}s to form \red{$9$}s
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Decoder Outputs --- Epoch \red{20}}
+  \begin{columns}
+    \begin{column}{0.59\textwidth}
+      \begin{center}
+        \includegraphics[scale=0.44]{deep-pu_epoch=020.jpg}
+      \end{center}
+    \end{column}
+    \begin{column}{0.41\textwidth}
+      \begin{itemize}[<+->]
+        \setlength{\itemsep}{20pt}
+        \item Positive decoder still unchanged
+        \item Negative decoder turning \blue{$4$}s into \red{$9$}s even more
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Decoder Outputs --- Epoch \red{50}}
+  \begin{columns}
+    \begin{column}{0.59\textwidth}
+      \begin{center}
+        \includegraphics[scale=0.44]{deep-pu_epoch=050.jpg}
+      \end{center}
+    \end{column}
+    \begin{column}{0.41\textwidth}
+      \begin{itemize}[<+->]
+        \setlength{\itemsep}{20pt}
+        \item Positive decoder still unchanged
+        \item Negative decoder almost entirely closes input \blue{$4$}s
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Decoder Outputs --- Epoch \red{100}}
+  \begin{columns}
+    \begin{column}{0.59\textwidth}
+      \begin{center}
+        \includegraphics[scale=0.44]{deep-pu_epoch=050.jpg}
+      \end{center}
+    \end{column}
+    \begin{column}{0.41\textwidth}
+      \begin{itemize}[<+->]
+        \setlength{\itemsep}{20pt}
+        \item Positive \& negative decoders always reconstruct \blue{$4$}s \& \red{$9$}s respectively
+        \item Suitable to use the generative model as a discriminative classifier
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Quantitative Results}
+  \begin{itemize}
+    \setlength{\itemsep}{15pt}
+    \onslide<+->{
+      \item \blue{\textbf{Our Architecture}}:
+        \begin{itemize}
+          \item \textit{Accuracy}: 98.0\%
+          \item \textit{AUC ROC}: 0.996
+          \item \textit{F1 Score}: 0.980
+        \end{itemize}
+    }
+    \onslide<+->{
+      \item \green{\textbf{Elkan \& Noto}}: Using Logistic Regression
+        \begin{itemize}
+          \item Discussion of this algorithm is beyond the scope of this talk.
+          \item \textit{Accuracy}: 89.9\%
+          \item \textit{AUC ROC}: 0.969
+          \item \textit{F1~Score}: 0.932
+        \end{itemize}
+    }
   \end{itemize}
 \end{frame}
 

@@ -84,4 +84,14 @@
 
   \coordinate[right of=zNout, node distance=\zOutNetLength] (znOutShift);
   \draw[net line,color=\Ncolor] (zNout) -- (znOutShift) |- (decN);
+
+  \onslide<6->{
+    \node[left of=xi, scale=0.7, node distance=0.8in,draw] (CatIn) {\includegraphics[width=.25\textwidth]{tikz/img/funny_cat.jpg}};
+  }
+  \onslide<7->{
+    \node[right of=xHatP, scale=0.7, node distance=0.8in,draw] (CatOut) {\includegraphics[width=.25\textwidth]{tikz/img/funny_cat.jpg}};
+  }
+  \onslide<8->{
+    \node[right of=xHatN, scale=0.6, node distance=0.8in,draw] (DogOut) {\includegraphics[width=.25\textwidth]{tikz/img/dog_face.jpg}};
+  }
 \end{tikzpicture}

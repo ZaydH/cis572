@@ -61,6 +61,12 @@
 % Imported via UltiSnips
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,decorations.markings,shadows,positioning,calc,backgrounds,shapes,overlay-beamer-styles}
+% Packages used for the Convolutional NN drawing
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{pgfplots}
+\usepackage{pgf-umlsd}
+\usepackage{ifthen}
 
 \newcommand{\pos}{\mathcal{P}}
 \newcommand{\unlabel}{\mathcal{U}}
@@ -73,9 +79,9 @@
 \input{macros}
 
 % Here's where the presentation starts, with the info for the title slide
-\title[Deep Positive-Unlabeled Learning]{Constructing a Positive-Unlabeled Learner using Deep Generative Models}
+\title[Deep Positive-Unlabeled Learning]{Positive-Unlabeled Learning using a Deep Hybrid Generative/Discriminative Model}
 \author[Zayd Hammoudeh]{%
-  \href{mailto:zayd@cs.uoregon.edu}{\textbf{Zayd Hammoudeh}}\inst{1}  % \textsuperscript{(\Letter)}
+  \href{mailto:zayd@cs.uoregon.edu}{\textbf{Zayd Hammoudeh}}\inst{1\textsuperscript{*}}  % \textsuperscript{(\Letter)}
   % \and
   % \href{mailto:lowd@cs.uoregon.edu}{Daniel Lowd}\inst{1}
 }
@@ -93,6 +99,11 @@
 
 \begin{frame}
   \titlepage
+
+  % \vspace{20pt}
+  \begin{center}
+    \textsuperscript{*} Under the supervision of \textbf{Daniel Lowd}
+  \end{center}
 \end{frame}
 
 \begin{frame}{What is PU Learning?}
@@ -101,7 +112,7 @@
     \item PU = Positive-Unlabeled
     \item Form of \blue{\textbf{binary classification}}
     \item Example of \textit{partially-supervised learning}
-    \item \green{\textbf{Non-traditional}} training dataset $\mathcal{S} \coloneqq \pos \cup \unlabel$
+    \item \green{\textbf{Non-traditional}} training dataset $\mathcal{S} \coloneqq \pos \cup \unlabel$ such that $\pos \cap \unlabel = \emptyset$
       \begin{itemize}[<+->]
         \item $\pos$: Labeled examples all from positive class
         \item $\unlabel$: Unlabeled training set with \blue{\textbf{unknown distribution}} of positive \& negative examples
@@ -114,19 +125,42 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Siamese Networks}
-  \begin{itemize}
-    \item
+\begin{frame}{What is an Autoencoder?}
+  \onslide<+->{Neural \textbf{Generative Model}: Reconstructs input (image) from compressed representation}
+
+  \onslide<+->{\vspace{8pt}Used for \textit{Representation Learning} --- typically dimensionality reduction}
+  \\\vspace{14pt}
+  \input{tikz/cae.tex}
+  \\
+  \onslide<+->{\centering\Large Objective Function $J = \min \norm{\bfx - \mathbf{\hat{x}}}$}
+\end{frame}
+
+\begin{frame}{Basic Idea}
+  \begin{itemize}[<+->]
+    \setlength{\itemsep}{20pt}
+    \item \textbf{Recall}: PU Learning is Binary Classification
+      \begin{itemize}[<+->]
+        \item \textit{Example}: \blue{\textbf{Positive}}=Cats \& \red{\textbf{Negative}}=Dogs
+      \end{itemize}
+    \item \textit{Project Intuition}: Simultaneously train two autoencoders (AE):
+      \begin{itemize}[<+->]
+        \setlength{\itemsep}{6pt}
+        \item \textit{Positive AE}: Only reconstruct images of \blue{cats}
+        \item \textit{Negative AE}: Only reconstruct images of \red{dogs}
+      \end{itemize}
+
+    \item \textbf{Classification}: Assign label matching whichever autoencoder reconstructs input better
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Our Architecture}
   \begin{center}
-    \scalebox{0.65}{\input{img/deep_pu.tex}}
+    \scalebox{0.65}{\input{tikz/deep_pu.tex}}
   \end{center}
 
+  \blue{\textbf{Components}}:
   \begin{itemize}
-    \setlength{\itemsep}{10pt}
+    \setlength{\itemsep}{4pt}
     \onslide<2->{\item Shared input encoder}
     \onslide<3->{\item Latent vector $\mathbf{z}$ partitioned into three parts}
     \onslide<4->{\item $g_{p}$: Decoder for \blue{positive}-examples}
@@ -139,8 +173,47 @@
     \setlength{\itemsep}{16pt}
     \item \blue{\textbf{Dataset}}: MNIST
     \item \blue{\textbf{Baseline}}: Elkan \& Noto with Logistic Regression
+    \item \blue{\textbf{Dataset Sizes}}:
+      \begin{itemize}
+        \item $\abs{\pos}$: \~3,000
+        \item $\abs{\unlabel}$: \~6,000 evenly split between positive \& negative classes
+      \end{itemize}
     \item \blue{\textbf{Labeling Frequency}}: 50\%
   \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+  {\tiny
+    \frametitle{References}
+    \bibliographystyle{ieeetr}
+    \bibliography{bib/ref.bib}
+  }
+\end{frame}
+
+\appendix
+\begin{frame}{Previous Work}
+  \onslide<+->{\textbf{Two Primary Paradigms}}
+  \begin{itemize}[<+->]
+    \setlength{\itemsep}{16pt}
+    \item ``\blue{\textbf{One Stage Approach}}''
+      \begin{itemize}[<+->]
+        \setlength{\itemsep}{4pt}
+      \item \textit{Heuristically} extract ``reliable negative'' examples~$\mathcal{N}'\in\unlabel$
+        \item Train binary classifier $\pos$ vs.\ $\mathcal{N}'$
+        \item \red{Disadvantage}: Heuristic-based with high variance based on $\mathcal{N}'$ extraction
+      \end{itemize}
+
+    \item ``\blue{\textbf{Two Stage Approach}}''
+      \begin{itemize}[<+->]
+        \setlength{\itemsep}{4pt}
+        \item Cost-sensitive optimization framework
+        \item Assume all examples in~$\mathcal{U}$ are negative with a label weight proportional to confidence sample is negative
+        \item Train binary classifier $\pos$ vs.\ $\unlabel$
+      \end{itemize}
+  \end{itemize}
+
+  \vspace{10pt}
+  \onslide<+->{\green{\textbf{Baseline for Comparison}}: Seminal two stage approach from Elkan \& Noto~\cite{Elkan:2008}}
 \end{frame}
 
 \end{document}

@@ -117,13 +117,13 @@
     \setlength{\itemsep}{14pt}
     \item PU = Positive-Unlabeled
     \item Form of \blue{\textbf{binary classification}}
-    \item Example of \textit{partially-supervised learning}
+    % \item Example of \textit{partially-supervised learning}
     \item \green{\textbf{Non-traditional}} training dataset $\mathcal{S} \coloneqq \pos \cup \unlabel$ such that $\pos \cap \unlabel = \emptyset$
       \begin{itemize}[<+->]
         \item $\pos$: Labeled examples all from positive class
         \item $\unlabel$: Unlabeled training set with \blue{\textbf{unknown distribution}} of positive \& negative examples
       \end{itemize}
-    \item \textit{Example Applications}: Protein-similarity prediction, land-cover classification, targeted marketing, deceptive/incentivized review identification
+    \item \textit{Example Applications}: %Protein-similarity prediction, land-cover classification, targeted marketing, deceptive/incentivized review identification
       \begin{itemize}[<+->]
         \item Both \blue{inductive} \& \red{transductive} domains
         \item We will focus on the \red{transductive} learning
@@ -134,11 +134,11 @@
 \begin{frame}{What is an Autoencoder?}
   \onslide<+->{Neural \textbf{Generative Model}: Reconstructs input (image) from compressed representation}
 
-  \onslide<+->{\vspace{8pt}Used for \textit{Representation Learning} --- typically dimensionality reduction}
-  \\\vspace{14pt}
+  % \onslide<+->{\vspace{8pt}Used for \textit{Representation Learning} --- typically dimensionality reduction}
+  \vspace{14pt}
   \input{tikz/cae.tex}
-  \\
-  \onslide<+->{\centering\Large Objective Function $J = \min \norm{\bfx - \mathbf{\hat{x}}}$}
+  % \\
+  % \onslide<+->{\centering\Large Objective Function $J = \min \norm{\bfx - \mathbf{\hat{x}}}$}
 \end{frame}
 
 \begin{frame}{Basic Idea}
@@ -151,8 +151,8 @@
     \item \textit{Project Intuition}: Simultaneously train two autoencoders (AE):
       \begin{itemize}[<+->]
         \setlength{\itemsep}{6pt}
-        \item \textit{Positive AE}: Only reconstruct images of \blue{cats}
-        \item \textit{Negative AE}: Only reconstruct images of \red{dogs}
+        \item \textit{Positive AE}: Only reconstruct \blue{positive} examples \onslide<+->{(images of \blue{cats})}
+        \item \textit{Negative AE}: Only reconstruct \red{negative} examples \onslide<+->{(images of \red{dogs})}
       \end{itemize}
 
     \item \textbf{Classification}: Assign label matching whichever autoencoder reconstructs input better
@@ -165,12 +165,12 @@
   \end{center}
 
   \blue{\textbf{Components}}:
-  \begin{itemize}
+  \begin{itemize}[<+->]
     \setlength{\itemsep}{4pt}
-    \onslide<2->{\item Shared input encoder}
-    \onslide<3->{\item Latent vector $\mathbf{z}$ partitioned into three parts}
-    \onslide<4->{\item $g_{p}$: Decoder for \blue{positive}-examples}
-    \onslide<5->{\item $g_{n}$: Decoder for \red{negative}-examples}
+    \item Shared input encoder
+    \item Latent vector $\mathbf{z}$ %partitioned into three parts
+    \item $g_{p}$: Decoder for \blue{positive}-examples
+    \item $g_{n}$: Decoder for \red{negative}-examples
   \end{itemize}
 \end{frame}
 

@@ -1,0 +1,65 @@
+\section{\toolname}\label{sec:Toolname}
+
+Similar to few-shot learning, positive-unlabeled (PU)~learning must overcome limited labeled data.  In fact, PU~learning could be viewed as an instance of zero-shot learning since labeled negative instances are non-existent!  Given this overlap, it may be reasonably expected that ideas originally proposed for Siamese networks may also be applicable to PU~learning.
+
+Shown in Figure~\ref{fig:Toolname}, our deep positive-unlabeled learning architecture, \textit{\toolname}, relies on a bifurcated autoencoder.  Each input ${\xBase\in\xDomain}$ is mapped by encoder~$g_e$ to (concatenated) latent space ${\zBase\in\mathbb{R}^{\abs{\zP}+\abs{\zS}+\abs{\zN}}}$. Unlike Siamese networks which map instances to~$\mathbb{R}^m$, \toolname\ is a function ${\fPU:\xDomain\mapsto\xDomain\times\xDomain}$.  Each instance in the generated tuple corresponds to an output of one of two decoders.  As described in the next section, decoder~$\fPUp$ is trained to accurately reconstruct specifically positive instances while decoder~$\fPUn$ is trained to correctly reconstruct negative instances.
+
+Observe that the positive and negative decoder inputs --- ${\lbrack \zS~\zP \rbrack}$ and ${\lbrack \zS~\zN \rbrack}$ respectively --- are not identical.  The shared latent vector component,~$\zS$, contains the mutual information needed to reconstruct \textit{both} positive and negative instances while $\zP$ and~$\zN$ contain class-specific reconstruction information --- i.e.,~for positive and negative respectively.
+
+\begin{figure}[t]
+  \centering
+  \input{tikz/deep_pu.tex}
+  \caption{\toolname\ network architecture}\label{fig:Toolname}
+\end{figure}
+
+\subsection{Learning}
+
+This subsection outlines our novel ideas for training \toolname\@.  Some explanations are necessarily brief due to brevity requirements.
+
+\paragraph{Loss Function} Just as Siamese network training requires the unique triplet loss, \toolname\ similarly uses a novel loss function we call the \textit{\attLossLow}.
+
+Let $\xBase\in\xDomain$ be a training example with label~${y\in\{-1,+1\}}$. Consider first the more straightforward case where ${\xBase\in\Pos}$ necessitating that ${y=+1}$.  As explained above, \toolname's positive decoder output,~$\xHatP$, should be a more accurate reconstruction of~$\xBase$ than the negative decoder output,~$\xHatN$. If $\xBase$ is considered the ``anchor,'' $\xHatP$ and $\xHatN$ become the triplet loss' $\exP$ and~$\exN$ respectively. The fundamental intuition outlined in Section~\ref{sec:Siamese} still applies.  Our positive \attLossLow\ is shown in Eq.~\eqref{eq:Loss:AttP}.  As with the triplet loss, $\alpha$ is a hyperparameter, and distance metric~$\distSym$'s selection application-specific with mean-squared error often adequate.
+
+\begin{equation}\label{eq:Loss:AttP}
+  \lPosAtt = \max\Big\{ \puDistDiff + \alpha, 0 \Big\}
+\end{equation}
+
+Consider next the alternative case where ${\xBase\in\Unlabel}$. $y$~is now unknown so the triplet loss cannot be used.  If we consider the output of the two decoders as poles of a magnet, $\xBase$ should be \textit{attracted} towards the decoder associated with its true~$y$. The unlabeled \attLossLow\ in Eq.~\ref{eq:Loss:AttU} modifies the triplet loss to incorporate this attraction.  The basic intuition behind this loss function, put colloquially, is that each ${\xBase\in\Unlabel}$ is driven to ``pick a side'' --- either the positive or negative class.
+
+\begin{equation}\label{eq:Loss:AttU}
+  \lUAtt = \max\Big\{ - \big\lvert\puDistDiff\big\rvert + \alpha, 0 \Big\}
+\end{equation}
+
+When ${\puDist{\xBase}{\xHatP} < \puDist{\xBase}{\xHatN}}$ --- i.e.,~$\xBase$ appears ``more positive'' --- Eq.~\eqref{eq:Loss:AttU} is equivalent to Eq.~\eqref{eq:Loss:AttP}, and the triplet loss' intuition applies. In the opposite case, where $\xBase$ appears ``more negative'' --- ${\puDist{\xBase}{\xHatN} < \puDist{\xBase}{\xHatP}}$ --- the absolute value inverts the intuition, meaning the loss is minimized when the distance between $\xBase$ and~$\xHatN$ is reduced and/or the distance between $\xBase$ and~$\xHatP$ increased.
+
+The \attLossLow\ can introduce instability during training since an obvious minimum is to attract all unlabeled instances to one decoder and produce a maximally poor reconstruction on the other decoder.  To ensure minimum reconstruction quality, a reconstruction error term is added to both the positive and unlabeled attractive losses as shown in Eq.~\eqref{eq:Loss:PuP} and Eq.~\eqref{eq:Loss:PuU} respectively. ${\lambda\in\mathbb{R}_{{>}0}}$ is a hyperparameter.
+
+\begin{align}
+  \lPuP &= \lPosAtt + \lambda\puDist{\xBase}{\xHatP} \label{eq:Loss:PuP}\\
+  \lPuU &= \lUAtt + \underbrace{\lambda\min\Big\{\puDist{\xBase}{\xHatP}, \puDist{\xBase}{\xHatN}\Big\}}_{\text{Reconstruction Quality}}\label{eq:Loss:PuU}
+\end{align}
+
+
+\paragraph{Training Algorithm} Training is divided into three disjoint phases.  In the first phase, the encoder and negative decoder are fit to minimize the reconstruction error on~$\Unlabel$ similar to a standard, stacked autoencoder; the positive decoder is untouched during this stage.  Once $\Unlabel$'s reconstruction error has adequately converged, training stops, and all weights in the encoder are frozen except those associated exclusively with $\zP$.  This ensures that during the next training phase, the performance of the negative decoder is not degraded.
+
+Stage~2 trains the encoder and positive decoder on~$\Pos$ similar again to a standard autoencoder.  We allow the positive encoder to train for twice as many epochs as the negative decoder.  This increases the likelihood that the positive decoder can reconstruct positive examples more accurately than the negative decoder.  Similarly, since the positive decoder has, until this point, never seen a negative training example, its reconstruction performance on negative instances should be poor.
+
+Before starting the final phase, all networks weights are unfrozen. The encoder and both decoders are then trained on interleaved batches from $\Pos$ and~$\Unlabel$ using the loss functions in Eq.~\eqref{eq:Loss:PuP} and~\eqref{eq:Loss:PuU}.  If hyperparameter $\alpha$ is initially set too high, attraction of unlabeled examples to the positive decoder can be unstable and result in unpredictable network behavior. We address this by setting the initial $\alpha$ close to zero and linearly increasing its value after each epoch.  The previously mentioned batch interleaving also promotes stability be ensuring the performance of both decoders remains in sync.
+
+% \begin{algorithm}[t]
+%   \caption{Joint training of the positive and unlabeled decoders}\label{alg:JointTraining}
+%   \input{alg/attractive_training.tex}
+% \end{algorithm}
+
+\subsection{Inference}
+
+For unlabeled example~${\xBase\in\Unlabel}$, if $g_{p}$ yields a superior reconstruction than $g_{n}$, it can be reasonably concluded that $\xBase$ is positive labeled; otherwise, $\xBase$ is more likely negative labeled.  This intuition is the basis for \toolname's inference function shown in Eq.~\eqref{eq:PU:ClassificationFunc}.
+
+  \begin{equation}\label{eq:PU:ClassificationFunc}
+    \hat{y} = -\sign{\puDistDiff}
+  \end{equation}
+
+\noindent
+In rare cases where ${\puDist{\xBase}{\xHatP}=\puDist{\xBase}{\xHatN}}$, $\xBase$ is equally likely to be either negative or positive labeled.  For simplicity, such examples are assigned a positive label.
+
+

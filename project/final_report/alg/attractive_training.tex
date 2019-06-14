@@ -1,0 +1,13 @@
+\begin{algorithmic}[1]
+  \State Unfreeze all weights
+  \State $\alpha \gets 0$
+  \While{\text{not converged}}
+    \State Increment value of $\alpha$ \Comment{Increasing temperature parameter}
+    \While{\text{epoch not complete}}
+      \State Select batch $b_{\Pos}$ from $\Pos$
+      \State Update $\vec{\theta}$ via $\nabla\lPuP(b_{\Pos})$
+      \State Select batch $b_{\Unlabel}$ from $\Unlabel$
+      \State Update $\vec{\theta}$ via $\nabla\lPuU(b_{\Unlabel})$
+    \EndWhile
+  \EndWhile
+\end{algorithmic}

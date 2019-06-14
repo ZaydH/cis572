@@ -1,0 +1,52 @@
+\documentclass[10pt]{article}
+
+\usepackage[margin=1in]{geometry}
+
+% Enable (uncolored) cross-reference hyperlinks
+\usepackage[colorlinks=false]{hyperref}
+
+\usepackage[shortcuts]{extdash}   % Used to get unbreakable dashes
+
+% Imported via UltiSnips
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\usepackage{amsfonts}  % Used for \mathbb and \mathcal
+\usepackage{amssymb}
+
+% Imported via UltiSnips
+\usepackage{mathtools} % for "\DeclarePairedDelimiter" macro
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+
+% Imported via UltiSnips
+\usepackage[noend]{algpseudocode}
+\usepackage[Algorithm,ruled]{algorithm}
+\algnewcommand\algorithmicforeach{\textbf{for each}}
+\algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
+
+% Imported via UltiSnips
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,shadows,positioning,calc,backgrounds,shapes,angles,quotes,decorations.pathreplacing,decorations.markings}
+
+\usepackage{todonotes}
+
+% Import symbols defined as latex macros
+\input{macros}
+
+\begin{document}
+
+\begin{center}
+  {\Large \textbf{Positive-Unlabeled Learning using a Deep Hybrid Generative/Discriminative Model}}
+  \\\vspace{6pt}
+  Zayd Hammoudeh
+\end{center}
+
+\input{introduction.tex}
+\input{siamese.tex}
+\input{deep_pu.tex}
+\bibliographystyle{ieeetr}
+\bibliography{bib/ref.bib}
+\end{document}

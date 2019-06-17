@@ -1,4 +1,4 @@
-\section{Experiments}
+\section{Experiments}\label{sec:Experiments}
 
 All experiments were performed on the MNIST~\cite{LeCun:1998} and \fashmnist~\cite{FashionMNIST} datasets. The  MNIST positive and negative classes were digits~``4'' and~``9'' respectively while \fashmnist's positive and negative classes were coat and ankle boot respectively.
 
@@ -10,31 +10,33 @@ The \textit{propensity score},~${e(x)=\Pr[\xBase\in\Pos\vert x,y=1]}$, is the fr
 
 \toolname's performance was compared against \elkan's algorithm.  To the extent of our knowledge, \elkan\ have never released an official implementation of their method. This necessitated that we develop our own implementation of their approach for this work.
 
-\elkan's algorithm is built on top of any binary classifier that is \textit{well-calibrated} ---~${\Pr[\hat{y} \vert x] \approx \Pr[y \vert x]}$.  Most binary classifiers are not well-calibrated, with the calibration of neural networks being particularly poor~\cite{Guo:2017}.  There are techniques that can transform a classifier to be well-calibrated including Platt scaling~\cite{Platt:1999} and isotonic regression. The scope of this project necessitated the use of logistic regression as \elkan's underlying classifier since it is naturally well-calibrated.
+\elkan's algorithm is built on top of any binary classifier that is \textit{well-calibrated}, i.e.~${\Pr[\hat{y} \vert x] \approx \Pr[y \vert x]}$.  Most binary classifiers are not well-calibrated, with the calibration of neural networks being particularly poor~\cite{Guo:2017}.  There are techniques that can transform a classifier to be well-calibrated including Platt scaling~\cite{Platt:1999} and isotonic regression. The scope of this project necessitated the use of logistic regression as \elkan's underlying classifier since it is naturally well-calibrated.
 
-A multilayer perceptron is significantly more expressive than a linear classifier, making the comparison in this section inherently unfair in our favor. For that reason, we provide results for a supervised baseline using neural network identical to \toolname's encoder plus a single output node.  The fully-supervised training set consists of~$\Pos$ and a set of negative examples,~$\Neg$, disjoint from~$\Unlabel$.  $\Unlabel$~is used as an inductive test set.
+A multilayer perceptron is significantly more expressive than a linear classifier, making the comparison in this section inherently unfair in our favor. For that reason, we provide results for a supervised baseline using neural network identical to \toolname's encoder plus a single output node.  The fully-supervised training set consists of~$\Pos$ and a set of negative examples,~$\Neg$, disjoint from the inductive test set~$\Unlabel$.
 
-Supervised learner hyperparameters can be naively tuned via a grid search.  These well-thread techniques are not immediately applicable to PU~learning as the validation set composition as well as the learner quality metrics are non-obvious.  This work makes no effort to optimize hyperparameters in any way.  They were instead tuned transductive accuracy, which represents an upperbound on our technique's performance.
+Supervised learner hyperparameters can be naively tuned via a grid search.  These well-thread techniques are not immediately applicable to PU~learning as the validation set composition as well as the learner quality metrics are non-obvious.  This work makes no effort to optimize hyperparameters in any way.  They were instead tuned transductive accuracy, which represents an ceiling on our technique's performance.
 
 \subsection{Quantitative Results}
 
 \begin{table}[t]
   \centering
-  \caption{Performance of \toolname, \elkan, and supervised learning for MNIST with positive class ``4'' negative class ``9''}\label{tab:Experiment:MNIST}
+  \caption{Performance of \toolname, \elkan, and supervised learning for MNIST with positive class ``4'' negative class ``9''}\label{tab:Experiments:MNIST}
   \input{tables/res_mnist.tex}
 \end{table}
 
 \begin{table}[t]
   \centering
-  \caption{Performance of \toolname, \elkan, and supervised learning for \fashmnist with positive class coat negative class ankle boot}\label{tab:Experiment:MNIST}
+  \caption{Performance of \toolname, \elkan, and supervised learning for \fashmnist\ with positive class ``coat'' negative class ``ankle boot''}\label{tab:Experiments:FashionMNIST}
   \input{tables/res_fashion-mnist.tex}
 \end{table}
 
-\toolname,
+\toolname's performance is judged against the baseline using the metrics of accuracy, area under the receiver operating characteristics curve (AUC ROC), and the F1~score.  Tables~\ref{tab:Experiments:MNIST} and~\ref{tab:Experiments:FashionMNIST} contain the results for the MNIST and \fashmnist\ datasets respectively.  \toolname\ outperforms \elkan\ across both datasets for all metrics.
+
+A supervised learner will almost always outperform a PU~learner since the former has access to labeled data from the negative class.  This is in spite of the PU~learner treating the problem as inductive while the supervised learner treats it as inductive.  \toolname\ is no exception to this rule.  It is encouraging though that supervised learning's performance improvement was comparatively small, which underscores the merits of our algorithm.
 
 \subsection{Decision Boundary Margin}\label{sec:Experiments:Margin}
 
-Decision boundary margin is a common metric for measuring the quality of a binary classification algorithm. Example~$\xBase$ is labeled positive when ${\pHatDist<\nHatDist}$; otherwise $\xBase$~is labeled negative. Figure~\ref{fig:Experiments:UnlabelPlot} displays the positive and negative decoder losses for the MNIST experiment in Table~\ref{}.
+Decision boundary margin is a common metric for measuring the quality of a binary classification algorithm. Example~$\xBase$ is labeled positive when ${\pHatDist<\nHatDist}$; otherwise $\xBase$~is labeled negative. Figure~\ref{fig:Experiments:UnlabelPlot} displays the positive and negative decoder losses for the MNIST experiment in Table~\ref{tab:Experiments:MNIST}.
 
 Each mark in the graph represents a single training example where the shape and color indicate the mark's actual label and whether the example was in $\Pos$ or~$\Unlabel$. $\pHatDist$ is the $x$-axis while $\nHatDist$ is the $y$-axis. The decision boundary where ${\pHatDist=\nHatDist}$ is represented by the gray dashed line.  As previous described, the predicted label of any point of above this positive while those examples below the line are predicted negative.
 
@@ -42,8 +44,8 @@ Ideally, all positive-valued examples (shown as blue circles for~$\Pos$ and red 
 
 \begin{figure}[t]
   \centering
-  % \input{plots/scatter_separation.tex}
-  \caption{\red{Decision boundary margin for MNIST with ``4'' and ``9'' as positive \& negative classes respectively}}\label{fig:Experiments:UnlabelPlot}
+  \input{plots/scatter_separation.tex}
+  \caption{Decision boundary margin for MNIST with ``4'' and ``9'' as positive \& negative classes respectively}\label{fig:Experiments:UnlabelPlot}
 \end{figure}
 
 Despite the high classification accuracy, margin is quite low with most samples clustered near the origin.  As would be expected, the margin for negative examples (green triangles) is consistent and generally lower than positive examples.  This is not unexpected given the absence of negative labeled data.

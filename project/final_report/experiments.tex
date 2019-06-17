@@ -10,13 +10,25 @@ The \textit{propensity score},~${e(x)=\Pr[\xBase\in\Pos\vert x,y=1]}$, is the fr
 
 \toolname's performance was compared against \elkan's algorithm.  To the extent of our knowledge, \elkan\ have never released an official implementation of their method. This necessitated that we develop our own implementation of their approach for this work.
 
-\elkan's algorithm is built on top of any binary classifier that is \textit{well-calibrated} ---~${\Pr[\hat{y} \vert x] \approx \Pr[y \vert x]}$.  Very few classifiers are well-calibrated, with the calibration of neural networks being particularly poor~\cite{Guo:2017}.  The scope of this project necessitated the use of logistic regression as \elkan's underlying classifier since it is naturally well-calibrated.
+\elkan's algorithm is built on top of any binary classifier that is \textit{well-calibrated} ---~${\Pr[\hat{y} \vert x] \approx \Pr[y \vert x]}$.  Most binary classifiers are not well-calibrated, with the calibration of neural networks being particularly poor~\cite{Guo:2017}.  There are techniques that can transform a classifier to be well-calibrated including Platt scaling~\cite{Platt:1999} and isotonic regression. The scope of this project necessitated the use of logistic regression as \elkan's underlying classifier since it is naturally well-calibrated.
 
 A multilayer perceptron is significantly more expressive than a linear classifier, making the comparison in this section inherently unfair in our favor. For that reason, we provide results for a supervised baseline using neural network identical to \toolname's encoder plus a single output node.  The fully-supervised training set consists of~$\Pos$ and a set of negative examples,~$\Neg$, disjoint from~$\Unlabel$.  $\Unlabel$~is used as an inductive test set.
 
 Supervised learner hyperparameters can be naively tuned via a grid search.  These well-thread techniques are not immediately applicable to PU~learning as the validation set composition as well as the learner quality metrics are non-obvious.  This work makes no effort to optimize hyperparameters in any way.  They were instead tuned transductive accuracy, which represents an upperbound on our technique's performance.
 
 \subsection{Quantitative Results}
+
+\begin{table}[t]
+  \centering
+  \caption{Performance of \toolname, \elkan, and supervised learning for MNIST with positive class ``4'' negative class ``9''}\label{tab:Experiment:MNIST}
+  \input{tables/res_mnist.tex}
+\end{table}
+
+\begin{table}[t]
+  \centering
+  \caption{Performance of \toolname, \elkan, and supervised learning for \fashmnist with positive class coat negative class ankle boot}\label{tab:Experiment:MNIST}
+  \input{tables/res_fashion-mnist.tex}
+\end{table}
 
 \toolname,
 

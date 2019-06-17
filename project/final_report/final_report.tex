@@ -7,6 +7,12 @@
 
 \usepackage[shortcuts]{extdash}   % Used to get unbreakable dashes
 
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+% Imported via UltiSnips
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,decorations.markings,shadows,positioning,calc,backgrounds,shapes}
+
 % Imported via UltiSnips
 \usepackage{amsmath}
 \DeclareMathOperator*{\argmax}{arg\,max}
@@ -47,6 +53,8 @@
 \input{introduction.tex}
 \input{siamese.tex}
 \input{deep_pu.tex}
+\input{experiments.tex}
+\input{future_work.tex}
 \bibliographystyle{ieeetr}
 \bibliography{bib/ref.bib}
 \end{document}

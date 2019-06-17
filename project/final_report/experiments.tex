@@ -1,0 +1,16 @@
+\section{Experiments}
+
+\subsection{}
+
+Decision boundary margin is a common metric for measuring the quality of a binary classification algorithm. Example~$\xBase$ is labeled positive when ${\pHatDist<\nHatDist}$; otherwise $\xBase$~is labeled negative. Figure~\ref{fig:Experiments:UnlabelPlot} displays the positive and negative decoder losses for the MNIST experiment in Table~\ref{}.
+
+Each mark in the graph represents a single training example where the shape and color indicate the mark's actual label and whether the example was in $\Pos$ or~$\Unlabel$. $\pHatDist$ is the $x$-axis while $\nHatDist$ is the $y$-axis. The decision boundary where ${\pHatDist=\nHatDist}$ is represented by the gray dashed line.  As previous described, the predicted label of any point of above this positive while those examples below the line are predicted negative.
+
+Ideally, all positive-valued examples (shown as \red{XXXX}) would be in the upper left corner of the figure ---~${\pHatDist\ll\nHatDist}$~--- while negative-value examples would be in the lower right corner ---~${\pHatDist\gg\nHatDist}$.
+
+\begin{figure}[h]
+  \centering
+  \input{plots/scatter_separation.tex}
+  \caption{Separation of unlabeled examples}\label{fig:Experiments:UnlabelPlot}
+\end{figure}
+

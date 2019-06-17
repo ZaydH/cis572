@@ -4,15 +4,23 @@
 \newcommand{\attLossCap}{A\attLossBase}
 \newcommand{\attLossLow}{a\attLossBase}
 
+% Imported via UltiSnips
+\usepackage{color}
+\newcommand{\colortext}[2]{{\color{#1} #2}}
+\newcommand{\red}[1]{\colortext{red}{#1}}
+\newcommand{\blue}[1]{\colortext{red}{#1}}
+\newcommand{\green}[1]{\colortext{green}{#1}}
+
 \newcommand{\etal}{~et~al.}
 \newcommand{\elkan}{Elkan \&~Noto}
+% Datasets
+\newcommand{\CIFARten}{CIFAR\=/10}
 \newcommand{\kmnist}{K\=/MNIST}   % Use unbreakable hyphen
-\newcommand{\cifarT}{CIFAR\=/10}  % Use unbreakable hyphen
 
 \newcommand{\Pos}{\mathcal{P}}
 \newcommand{\Unlabel}{\mathcal{U}}
 
-% Attulsive loss function names
+% Attractive loss function names
 \newcommand{\lAtt}{\mathcal{L}_{\text{Att}}}
 \newcommand{\lAttBase}[1]{\mathcal{L}_{\text{Att-}#1}}
 \newcommand{\lPosAtt}{\lAttBase{\Pos}}
@@ -21,6 +29,10 @@
 \newcommand{\lPu}{\lPuBase{\Pos{/}\Unlabel}}
 \newcommand{\lPuP}{\lPuBase{\Pos}}
 \newcommand{\lPuU}{\lPuBase{\Unlabel}}
+
+% Labels for the positive and negative classes
+\newcommand{\posLabel}{+1}
+\newcommand{\negLabel}{-1}
 
 \newcommand{\xBase}{\mathbf{x}}
 \newcommand{\xDomain}{\mathcal{X}}
@@ -47,13 +59,8 @@
 \newcommand{\distSym}{\delta}
 \newcommand{\siamDist}[3]{\puDist{#1\left(#2\right)}{#1\left(#3\right)}}
 \newcommand{\puDist}[2]{\distSym\left(#1, #2\right)}
-\newcommand{\puDistDiff}{\puDist{\xBase}{\xHatP} - \puDist{\xBase}{\xHatN}}
+\newcommand{\pHatDist}{\puDist{\xBase}{\xHatP}}
+\newcommand{\nHatDist}{\puDist{\xBase}{\xHatN}}
+\newcommand{\puDistDiff}{\pHatDist - \nHatDist}
 \newcommand{\sign}[1]{\text{sgn}\Big(#1\Big)}
 
-% Colors
-\definecolor{atomictangerine}{rgb}{1.0, 0.6, 0.4}
-\definecolor{dartmouthgreen}{rgb}{0.05, 0.5, 0.06}
-\definecolor{lust}{rgb}{0.9, 0.13, 0.13}
-
-% Convolutional AE macros
-\newcommand{\bfx}{\mathbf{x}}

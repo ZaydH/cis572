@@ -14,23 +14,25 @@ Observe that the positive and negative decoder inputs --- ${\lbrack \zS~\zP \rbr
 
 \subsection{Learning}
 
-This subsection outlines our novel ideas for training \toolname\@.  Some explanations are necessarily brief due to brevity requirements.
+This subsection outlines our novel ideas for training \toolname\@.
 
 \paragraph{Loss Function} Just as Siamese network training requires the unique triplet loss, \toolname\ similarly uses a novel loss function we call the \textit{\attLossLow}.
 
-Let $\xBase\in\xDomain$ be a training example with label~${y\in\{-1,+1\}}$. Consider first the more straightforward case where ${\xBase\in\Pos}$ necessitating that ${y=+1}$.  As explained above, \toolname's positive decoder output,~$\xHatP$, should be a more accurate reconstruction of~$\xBase$ than the negative decoder output,~$\xHatN$. If $\xBase$ is considered the ``anchor,'' $\xHatP$ and $\xHatN$ become the triplet loss' $\exP$ and~$\exN$ respectively. The fundamental intuition outlined in Section~\ref{sec:Siamese} still applies.  Our positive \attLossLow\ is shown in Eq.~\eqref{eq:Loss:AttP}.  As with the triplet loss, $\alpha$ is a hyperparameter, and distance metric~$\distSym$'s selection application-specific with mean-squared error often adequate.
+Let $\xBase\in\xDomain$ be a training example with label~${y\in\{\negLabel,\posLabel\}}$. Consider first the more straightforward case where ${\xBase\in\Pos}$ necessitating that ${y=\posLabel}$.  As explained above, \toolname's positive decoder output,~$\xHatP$, should be a more accurate reconstruction of~$\xBase$ than the negative decoder output,~$\xHatN$. If $\xBase$ is considered the ``anchor,'' $\xHatP$ and $\xHatN$ can serve as the triplet loss' $\exP$ and~$\exN$ respectively. The fundamental intuition outlined in Section~\ref{sec:Siamese} still applies.  Our positive \attLossLow\ is shown in Eq.~\eqref{eq:Loss:AttP}.  As with the triplet loss, $\alpha$ is a hyperparameter, and distance metric~$\distSym$'s selection application-specific with mean-squared error often adequate.
 
 \begin{equation}\label{eq:Loss:AttP}
   \lPosAtt = \max\Big\{ \puDistDiff + \alpha, 0 \Big\}
 \end{equation}
 
-Consider next the alternative case where ${\xBase\in\Unlabel}$. $y$~is now unknown so the triplet loss cannot be used.  If we consider the output of the two decoders as poles of a magnet, $\xBase$ should be \textit{attracted} towards the decoder associated with its true~$y$. The unlabeled \attLossLow\ in Eq.~\ref{eq:Loss:AttU} modifies the triplet loss to incorporate this attraction.  The basic intuition behind this loss function, put colloquially, is that each ${\xBase\in\Unlabel}$ is driven to ``pick a side'' --- either the positive or negative class.
+Consider next the alternative case where ${\xBase\in\Unlabel}$. $y$~is unknown so the triplet loss cannot be directly used, but it helps guide the intuition.
+
+When ${y=\posLabel}$, then during training the distance between~$\xBase$ and~$\exP$ should decrease while the distance between~$\xBase$ and~$\exN$ should increase.  If ${y=\negLabel}$, the direction of changes of these distances is reversed.  $\xBase$~can be thought of as being \textit{attracted} to the decoder associated with its label~$y$. The unlabeled \attLossLow\ in Eq.~\ref{eq:Loss:AttU} modifies the triplet loss to incorporate this attraction.  The basic intuition behind this loss function, put colloquially, is that each ${\xBase\in\Unlabel}$ is driven to ``pick a side'' --- either the positive or negative class.
 
 \begin{equation}\label{eq:Loss:AttU}
   \lUAtt = \max\Big\{ - \big\lvert\puDistDiff\big\rvert + \alpha, 0 \Big\}
 \end{equation}
 
-When ${\puDist{\xBase}{\xHatP} < \puDist{\xBase}{\xHatN}}$ --- i.e.,~$\xBase$ appears ``more positive'' --- Eq.~\eqref{eq:Loss:AttU} is equivalent to Eq.~\eqref{eq:Loss:AttP}, and the triplet loss' intuition applies. In the opposite case, where $\xBase$ appears ``more negative'' --- ${\puDist{\xBase}{\xHatN} < \puDist{\xBase}{\xHatP}}$ --- the absolute value inverts the intuition, meaning the loss is minimized when the distance between $\xBase$ and~$\xHatN$ is reduced and/or the distance between $\xBase$ and~$\xHatP$ increased.
+When ${\puDist{\xBase}{\xHatP} < \puDist{\xBase}{\xHatN}}$ --- i.e.,~$\xBase$ appears ``more positive'' --- Eq.~\eqref{eq:Loss:AttU} is equivalent to Eq.~\eqref{eq:Loss:AttP}, and the triplet loss' intuition applies. In the opposite case, where $\xBase$ appears ``more negative'' --- ${\puDist{\xBase}{\xHatN} < \puDist{\xBase}{\xHatP}}$ --- the absolute value inverts the intuition, meaning the loss is minimized when the distance between $\xBase$ and~$\xHatN$ is reduced and the distance between $\xBase$ and~$\xHatP$ increased.
 
 The \attLossLow\ can introduce instability during training since an obvious minimum is to attract all unlabeled instances to one decoder and produce a maximally poor reconstruction on the other decoder.  To ensure minimum reconstruction quality, a reconstruction error term is added to both the positive and unlabeled attractive losses as shown in Eq.~\eqref{eq:Loss:PuP} and Eq.~\eqref{eq:Loss:PuU} respectively. ${\lambda\in\mathbb{R}_{{>}0}}$ is a hyperparameter.
 
@@ -39,6 +41,7 @@ The \attLossLow\ can introduce instability during training since an obvious mini
   \lPuU &= \lUAtt + \underbrace{\lambda\min\Big\{\puDist{\xBase}{\xHatP}, \puDist{\xBase}{\xHatN}\Big\}}_{\text{Reconstruction Quality}}\label{eq:Loss:PuU}
 \end{align}
 
+\input{alg/complete_alg.tex}
 
 \paragraph{Training Algorithm} Training is divided into three disjoint phases.  In the first phase, the encoder and negative decoder are fit to minimize the reconstruction error on~$\Unlabel$ similar to a standard, stacked autoencoder; the positive decoder is untouched during this stage.  Once $\Unlabel$'s reconstruction error has adequately converged, training stops, and all weights in the encoder are frozen except those associated exclusively with $\zP$.  This ensures that during the next training phase, the performance of the negative decoder is not degraded.
 

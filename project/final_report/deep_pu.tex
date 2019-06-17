@@ -41,7 +41,10 @@ The \attLossLow\ can introduce instability during training since an obvious mini
   \lPuU &= \lUAtt + \underbrace{\lambda\min\Big\{\puDist{\xBase}{\xHatP}, \puDist{\xBase}{\xHatN}\Big\}}_{\text{Reconstruction Quality}}\label{eq:Loss:PuU}
 \end{align}
 
-\input{alg/complete_alg.tex}
+\begin{algorithm}[t]
+  \caption{\toolname\ training algorithm}\label{alg:}
+  \input{alg/complete_alg.tex}
+\end{algorithm}
 
 \paragraph{Training Algorithm} Training is divided into three disjoint phases.  In the first phase, the encoder and negative decoder are fit to minimize the reconstruction error on~$\Unlabel$ similar to a standard, stacked autoencoder; the positive decoder is untouched during this stage.  Once $\Unlabel$'s reconstruction error has adequately converged, training stops, and all weights in the encoder are frozen except those associated exclusively with $\zP$.  This ensures that during the next training phase, the performance of the negative decoder is not degraded.
 

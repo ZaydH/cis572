@@ -1,5 +1,5 @@
 \newcommand{\scatterAxisMin}{0}
-\newcommand{\scatterAxisMax}{0.1}
+\newcommand{\scatterAxisMax}{0.30}
   \centering
   \begin{tikzpicture}
       \pgfplotstableread[col sep=comma] {plots/data/scatter_sep_data.csv}\thedata
@@ -10,10 +10,12 @@
            ymax=\scatterAxisMax,
            xmin=\scatterAxisMin,
            xmax=\scatterAxisMax,
-           % xlabel={\large $\pHatDist$},
-           % ylabel={\large $\nHatDist$},
+           xlabel={\large $\pHatDist$},
+           ylabel={\large $\nHatDist$},
            % legend style={at={(0.008,0.8)},anchor=west},
            point meta=explicit,
+           xtick distance=0.05,
+           ytick distance=0.05,
            % xtick={0.1,1,10,60,3600,36000},
            % xticklabels={$0.1\textrm{sec}$,$1\textrm{sec}$,$10\textrm{sec}$,$1\textrm{min}$,$1\textrm{hr}$,$10\textrm{hr}$},
            % ytick={0.1,1,10,60,3600,25200},
@@ -23,7 +25,7 @@
            height=12cm,
 %           axis x line*=bottom,  % Remove axis line from top
 %           axis y line*=left,    % Remove axis line from right
-           axis line style={draw=none},
+           % axis line style={draw=none},
            % xtick pos=left, % Remove top ticks
            % ytick pos=left, % Remove right ticks
 %           legend pos=north west,
@@ -36,21 +38,21 @@
                      scatter,
                      only marks,
                      scatter/classes={
-                        1={mark=square*,color=black,very thin,mark size=1.65pt,fill opacity=0.5,{fill=red}},
-                        2={mark=triangle*,fill opacity=0.5,color=black,mark size=2.4pt,{fill=ForestGreen}},
+                        1={mark=square*,color=black,very thin,mark size=1.65pt,fill opacity=0.3,{fill=red}},
+                        2={mark=triangle*,fill opacity=0.3,color=black,mark size=2.4pt,{fill=green}},
                         0={mark=o,blue}
                      },
                      mark size=2pt
                    ]
                    table[x index=1,y index=2, meta index=0] {\thedata};
-          % \addplot[dashed, domain=\scatterAxisMin:\scatterAxisMax, smooth, color=gray] {x} {};
+          \addplot[dashed, domain=\scatterAxisMin:\scatterAxisMax, smooth, color=gray] {x} {};
 %          \addplot[dashed, domain=\scatterAxisMin:36000, smooth, color=gray] {x} node[very near start] (endofplotsquare) {};
 %          \node [above left,color=black,thick] at (endofplotsquare) {$y=x$};
           % \draw [thick, color=black] (\scatterAxisMin,\scatterAxisMin) -- (\scatterAxisMax,\scatterAxisMax);  % vertical
           % \draw [color=black] (36000,\scatterAxisMin) -- (36000,25200);
-          \legend{$\Pos$%,
-                  % $\Unlabel\in\{\PosLabel\}$,
-                  %Both Terminate
+          \legend{$\Unlabel\in\{\posLabel\}$,
+                  $\Unlabel\in\{\negLabel\}$,
+                  $\Pos$
                  }
       \end{axis}
   \end{tikzpicture}
